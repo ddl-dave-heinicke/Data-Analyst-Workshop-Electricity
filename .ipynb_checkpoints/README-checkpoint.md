@@ -16,6 +16,7 @@ Once you have access to the Domino training environment - Guide your mouse to th
 
 Select the project called PowerGeneration
 
+# update image
 <!-- ![image](readme_images/Search.png) -->
 
 <p align="center">

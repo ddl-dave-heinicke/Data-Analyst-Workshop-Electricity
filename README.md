@@ -16,6 +16,7 @@ Once you have access to the Domino training environment - Guide your mouse to th
 
 Select the project called PowerGeneration
 
+# update image
 <!-- ![image](readme_images/Search.png) -->
 
 <p align="center">
@@ -26,6 +27,7 @@ Read the readme to learn more about the project's use case, status, etc.
 
 In the top right corner, choose the icon to **fork** the project. Name the project *Domino-Training-yourname*
 
+# update image
 <!-- ![image](readme_images/Fork.png) -->
 
 <p align="center">
