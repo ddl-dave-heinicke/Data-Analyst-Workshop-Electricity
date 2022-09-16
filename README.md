@@ -147,9 +147,7 @@ Type a name for the Workspace in the 'Workspace Name' cell and next click throug
 
 Select JupyterLab as the Workspace IDE
 
-Click the Hardware Tier dropdown to browse all available hardware configurations - ensure that Small is selected. 
-
-Click Launch now.
+Click Launch.
 
 <p align="center">
 <img src = readme_images/LaunchWorkspace.png width="800">
