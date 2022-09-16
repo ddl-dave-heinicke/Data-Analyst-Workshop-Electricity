@@ -153,6 +153,7 @@ Click Launch.
 <img src = readme_images/LaunchWorkspace.png width="800">
 </p>
 
+# Update
 Once the workspace is launched, create a new python notebook by clicking here:
 
 <p align="center">
@@ -161,12 +162,13 @@ Once the workspace is launched, create a new python notebook by clicking here:
 
 Once your notebook is loaded, click on the left blue menu and click on the Data page, then onto the data source we added in lab 1 as displayed below
 
+# Update
 <p align="center">
 <img src = readme_images/DataTab.png width="800">
 </p>
 
 Copy the provided code snippet into your notebook and run the cell
-
+# Update
 <p align="center">
 <img src = readme_images/S3CodeSnippet.png width="800">
 </p>
