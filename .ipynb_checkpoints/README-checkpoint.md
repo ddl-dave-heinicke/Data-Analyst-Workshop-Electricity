@@ -115,7 +115,7 @@ We will now add a data connection defined by the admin of our project to later q
 <img src = readme_images/AddDataSource.png width="800">
 </p>
 
-Select the 'Domino-PowerGeneration-Workshop' s3 bucket connection and click add to project
+Select the 'Domino-PowerGeneration-Workshop' s3 bucket connection and click add to project (The avaialble data sources on the left may look different).
 
 <!-- ![image](readme_images/AddS3.png) -->
 
