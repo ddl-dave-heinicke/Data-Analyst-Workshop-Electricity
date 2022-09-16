@@ -133,46 +133,11 @@ The data source should look like the image below
 
 This concludes all labs in section 1 - Prepare Project and Data! 
 
-## Section 2 - Develop Model
+## Section 2 - Work With Historic Data
 
-### Lab 2.1 - Inspect Compute Environment
-From the left blue menu click on the cube icon page called 'Environments'.
+### Lab 2.1 - Exploring Workspaces
 
-<!-- ![image](readme_images/ShowEnv.png) -->
-
-<p align="center">
-<img src = readme_images/ShowEnv.png width="800">
-</p>
-
-Select 'Domino-Workshop-Environment' 
-
-<!-- ![image](readme_images/EnvironmentsPage.png) -->
-
-<p align="center">
-<img src = readme_images/EnvironmentsPage.png width="800">
-</p>
-
-Inspect the dockerfile to understand the packages installed, configurations specified, and kernels installed etc. 
-
-Scroll down to Pluggable Workspaces Tools - this is the area in the compute environment where IDEs are made available for end users
-
-Scroll down to the Run Setup Scripts section
-
-Here we have a script that executes upon startup of workspace sessions or job (pre-run script) and a script that executes upon termination of a workspace session or job (post-run script) 
-
-Finally navigate to the Projects tab - you should see all projects that are leveraging this compute environment. Click on your project to navigate back to your project. 
-
-<!-- ![image](readme_images/SaidEnvs.png) -->
-
-<p align="center">
-<img src = readme_images/SaidEnvs.png width="800">
-</p>
-
-Click into the Workspaces tab to prepare for the next lab.
-
-### Lab 2.2 - Exploring Workspaces
-
-In the top right corner click Create New Workspace
+In the top right corner click Create New Workspace.
 
 <p align="center">
 <img src = readme_images/AddWorkspace.png width="800">
