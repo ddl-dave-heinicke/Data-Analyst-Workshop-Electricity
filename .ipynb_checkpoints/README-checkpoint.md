@@ -27,6 +27,7 @@ Read the readme to learn more about the project's use case, status, etc.
 
 In the top right corner, choose the icon to **fork** the project. Name the project *Domino-Training-yourname*
 
+# update image
 <!-- ![image](readme_images/Fork.png) -->
 
 <p align="center">
@@ -107,8 +108,6 @@ For the goal title type in 'Explore Data' and click save. Once the goal is saved
 
 We will now add a data connection defined by the admin of our project to later query in data. To do so - navigate to the Data tab of your projects. If you're taken to the Domino Datasets view, please click on the Data Sources view instead and click on 'Add a Data Source'
 
-Select the 'domino-winequality-workshop' s3 bucket connection and click add to project
-
 <!-- ![image](readme_images/AddDataSource.png) -->
 
 <p align="center">
@@ -116,7 +115,7 @@ Select the 'domino-winequality-workshop' s3 bucket connection and click add to p
 <img src = readme_images/AddDataSource.png width="800">
 </p>
 
-Select the 'domino-winequality-workshop' s3 bucket connection and click add to project
+Select the 'Domino-PowerGeneration-Workshop' s3 bucket connection and click add to project
 
 <!-- ![image](readme_images/AddS3.png) -->
 
