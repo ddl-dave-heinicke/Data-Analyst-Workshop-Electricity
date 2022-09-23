@@ -3,24 +3,18 @@ import pandas as pd
 # import numpy as np
 import datetime
 import os
+import sys
+import argparse
 import requests
 import csv
 
 def pull_data(start=None, end=None):
     
-    # Convert start and end to dates. If no start time is provided, default to Jan 1, 2019
-    # If no end date is provided, defualt to yesterday.
+    # Convert start and end to dates. 
+    start_date = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
     
-    if start:
-        start_date = datetime.datetime.strptime(start, '%Y-%m-%d 00:00:00')
-    else:
-        start_date_str = '2019-01-01 00:00:00'
-        start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d 00:00:00')
-    
-    if end:
-        end_date = datetime.datetime.strptime(end, '%Y-%m-%d 00:00:00')
-    else:
-        end_date = datetime.datetime.today() - datetime.timedelta(days=1)
+    end_date = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
+
 
     # BMS has a max 90 day period for downloads. Break up training data into 90 day chunks
     next_start_date = start_date
@@ -90,3 +84,22 @@ def pull_data(start=None, end=None):
     
     # Save the consolidated data back to the project
     consolidated_data.to_csv('consolidated_data_{}.csv'.format(now), index=False)
+    
+if __name__ == "__main__":
+    
+    # Pass start and end dates. If no start time is provided, default to Jan 1, 2019.
+    # If no end date is provided, defualt to yesterday.
+    
+    parser=argparse.ArgumentParser()
+    
+    yesterday = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
+    
+    parser.add_argument("--start", type=str, default='2019-01-01 00:00:00', help="Start Date")
+    parser.add_argument("--end", type=str, default=yesterday, help="End Date")
+    
+    args = parser.parse_args()
+    
+    print(args.start)
+    print(args.end)
+    
+    pull_data(args.start, args.end)
