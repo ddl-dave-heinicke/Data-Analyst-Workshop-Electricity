@@ -67,7 +67,7 @@ def pull_data(start=None, end=None):
                   'WIND', 'PS', 'NPSHYD', 'OCGT',
                   'OTHER', 'INTFR', 'INTIRL', 'INTNED',
                    'INTEW', 'BIOMASS', 'INTEM']
-            consolidated_data = consolidated_data.append(df)
+            consolidated_data = pd.concat([consolidated_data, df], axis=0)
 
     # Sort by dates ascending
     consolidated_data = consolidated_data.sort_values(by=['date', 'half_hour_increment'], ascending=True)
@@ -78,12 +78,11 @@ def pull_data(start=None, end=None):
     consolidated_data.rename(columns={'date':'datetime'}, inplace=True)
     consolidated_data.drop('half_hour_increment', axis=1, inplace=True)
 
-    consolidated_data = consolidated_data.set_index('datetime')
-    
+    # consolidated_data = consolidated_data.set_index('datetime')
     now = str(datetime.datetime.today())
     
     # Save the consolidated data back to the project
-    consolidated_data.to_csv('consolidated_data_{}.csv'.format(now), index=False)
+    consolidated_data.to_csv('PowerGenerationData_{}_to_{}.csv'.format(str(start), str(end)), index=False)
     
 if __name__ == "__main__":
     
@@ -98,8 +97,5 @@ if __name__ == "__main__":
     parser.add_argument("--end", type=str, default=yesterday, help="End Date")
     
     args = parser.parse_args()
-    
-    print(args.start)
-    print(args.end)
     
     pull_data(args.start, args.end)
