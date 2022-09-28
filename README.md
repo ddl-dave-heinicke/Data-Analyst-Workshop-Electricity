@@ -276,7 +276,7 @@ daily_peak_df = daily_peak_df[idx]
 
 daily_peak_df.head()
 ```
-We can also vizualize the hours of the day when demand peaks, and save our plot.
+We can also visualize the hours of the day when demand peaks, and save our plot.
 
 ```python
 import seaborn as sns
@@ -319,7 +319,8 @@ daily_peak_df.to_csv(path, index = False)
 ```
 
 Your notebook should be populated like the display below.
-#Update
+
+# Update
 <!-- ![image](readme_images/EDAView.png) -->
 
 <p align="center">
@@ -336,6 +337,7 @@ Rename your notebook 'EDA_code.ipynb' by right clicking on the file name as show
 
 Now that we've finished working on our notebook and written data back to our project, we want to sync our latest work. To do so click on the File Changes tab in the top left corner of your screen - 
 
+# Update
 <p align="center">
 <img src = readme_images/SyncProject.png width="800">
 </p>
@@ -346,6 +348,7 @@ Click the Domino logo on the upper left corner of the blue menu and select on th
 
 Notice that the latest commit will reflect the commit message you just logged and you can see 'EDA_code.ipynb' in your file directory.
 
+ # Update
 <p align="center">
 <img src = readme_images/DFS.png width="800">
 </p>
@@ -367,15 +370,22 @@ Click the ellipses on the goal to mark the goal as complete
 
 ### Lab 2.4 - Run and Track Jobs
 
-Now it's time to train our models! 
+Workspaces are great environments for doing exploratory work and writing code. However, once our code is finished, we may want to run it regularly- which would be tedious if we have to spin up a workspace each time.
+To simply run our code in our predefined environment and quickly visualize outputs, Domino has a feature called Jobs. Jobs spin up an instance, run a script, save outputs, and shut down the instance for us.
 
-We are taking a three pronged approach and building a model in sklearn (python), xgboost (R), and an auto-ml ensemble model (h2o).
-
-First, navigate back to your JupyterLab workspace tab. In your file browser go into the scripts folder and inspect 'multitrain.py'
-
+# Jobs Image
 <p align="center">
 <img src = readme_images/MultiTrain.png width="800">
 </p>
+
+
+In this example, we want to pull some more recent data from BMRS and save it to the Domino File System.
+
+Click on Run, copy the following command, and paste it into the Run Command:
+
+```shell
+scripts/multitrain.py
+```
 
 Check out the code in the script and comments describing the purpose of each line of code.
 

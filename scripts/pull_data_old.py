@@ -1,6 +1,5 @@
 #import the packages we need
 import pandas as pd
-# import numpy as np
 import datetime
 import os
 import sys
@@ -54,13 +53,18 @@ def pull_data(start=None, end=None):
         print('Downloading {} to {}'.format(start, end))
     
     # Roll up indididual csvs as a single training set
-    print('Preparing traiing and test data')
+    print('Consolidating Data')
 
     consolidated_data = pd.DataFrame()
 
     for f in os.listdir('raw_data/'):
         if f.endswith('.csv'):
-            df = pd.read_csv('raw_data/' + f, skiprows=1, skipfooter=1, header=None, engine='python')
+            df = pd.read_csv('raw_data/' + f,
+                             skiprows=1,
+                             skipfooter=1, 
+                             # header=None, 
+                             # engine='python',
+                             parse_dates=['datetime'])
             df = df.iloc[:,0:18]
             df.columns = ['HDF', 'date', 'half_hour_increment',
                   'CCGT', 'OIL', 'COAL', 'NUCLEAR',
@@ -77,27 +81,28 @@ def pull_data(start=None, end=None):
     consolidated_data['date'] = consolidated_data.apply(lambda x:x['date']+ datetime.timedelta(minutes=30*(int(x['half_hour_increment'])-1)), axis = 1)
     consolidated_data.rename(columns={'date':'datetime'}, inplace=True)
     consolidated_data.drop('half_hour_increment', axis=1, inplace=True)
-
-    # consolidated_data = consolidated_data.set_index('datetime')
-    now = str(datetime.datetime.today())
     
-    # Save the consolidated data back to the project
-    consolidated_data.to_csv('PowerGenerationData_{}_to_{}.csv'.format(str(start), str(end)), index=False)
+    # Save the consolidated data back to Domino Data Sets
+    path = str('/domino/datasets/local/{}/Daily_Peak_Production_Summer_2022.csv'.format(os.environ.get('DOMINO_PROJECT_NAME')))
+    daily_peak_df.to_csv(path, index = False)
+    
+    # Delete temp csv files
+    for f in os.listdir('raw_data'):
+        if f.endswith('.csv'):
+            os.remove('raw_data/' + f)
     
 if __name__ == "__main__":
     
     # Pass start and end dates. If no start time is provided, default to Jan 1, 2019.
     # If no end date is provided, defualt to yesterday.
     
-    # parser=argparse.ArgumentParser()
+    parser=argparse.ArgumentParser()
     
-    previous_month = (datetime.datetime.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d %H:%M:%S')
     yesterday = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
     
+    parser.add_argument("--start", type=str, default='2019-01-01 00:00:00', help="Start Date")
+    parser.add_argument("--end", type=str, default=yesterday, help="End Date")
     
-    # parser.add_argument("--start", type=str, default='2019-01-01 00:00:00', help="Start Date")
-    # parser.add_argument("--end", type=str, default=yesterday, help="End Date")
+    args = parser.parse_args()
     
-    # args = parser.parse_args()
-    
-    pull_data(previous_month, yesterday)
+    pull_data(args.start, args.end)

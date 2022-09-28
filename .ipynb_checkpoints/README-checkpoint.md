@@ -276,7 +276,7 @@ daily_peak_df = daily_peak_df[idx]
 
 daily_peak_df.head()
 ```
-We can also vizualize the hours of the day when demand peaks, and save our plot.
+We can also visualize the hours of the day when demand peaks, and save our plot.
 
 ```python
 import seaborn as sns
