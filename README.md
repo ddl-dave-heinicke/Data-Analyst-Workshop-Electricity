@@ -307,7 +307,7 @@ for i, row in monthly_totals.iterrows():
     plt.figure(figsize=(8,5))
     plt.title('Total Contribution to Peak Production by Source, Month: {}'.format(i))
     plt.pie(row, labels=labels, colors=colors, autopct='%1.1f%%')
-```python    
+```
 
 Finally write your data to a Domino Dataset by running:
 
