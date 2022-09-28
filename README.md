@@ -371,6 +371,7 @@ Click the ellipses on the goal to mark the goal as complete
 ### Lab 2.4 - Run and Track Jobs
 
 Workspaces are great environments for doing exploratory work and writing code. However, once our code is finished, we may want to run it regularly- which would be tedious if we have to spin up a workspace each time.
+
 To simply run our code in our predefined environment and quickly visualize outputs, Domino has a feature called Jobs. Jobs spin up an instance, run a script, save outputs, and shut down the instance for us.
 
 # Jobs Image
@@ -392,14 +393,14 @@ Type in the following command below in the **File Name** section of the **Start 
 </p>
 
 ```shell
-'scripts/pull_data.py' '--start=2022-09-01 00:00:00' '--end=2022-09-27 00:00:00'
+scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-27 00:00:00'
 ```
 # Update
 <p align="center">
 <img src = readme_images/Jobsrun.png width="800">
 </p>
 
-Click into the sklearn_model_train.py job run.
+Click into the pull_data.py job run.
 
 In the details tab of the job run note that the compute environment and hardware tier are tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
 
@@ -411,92 +412,34 @@ Now, click into Domino Datasets and examine the contents in “Power Generation 
 
 In this example, we pushed the results to Dominio Datasets, but results could be pushed back to any attached data source such as S3, Snowflake etc.
 
+### Lab 2.5 - Schedule Jobs
 
-**Refresh the page**. Inspect the table and graph to understand the R^2 value and Mean Squared Error (MSE) for each model. From our results it looks like the sklearn model is the best candidate to deploy.
+Say we wanted to pull the data each month. Rather than running this job manually, we can schedule the job to run in Domino.
 
-In the next section of labs we will deploy the model we trained here!
+The script we ran manually, pull_data.py, defaults to pulling the past 30 days if we don't pass it an start and end date, so we can simply schedule it to run each month.
+
+Navigate to “Scheduled Jobs” under “Publish”, and select, “New Scheduled Job”
+
+# Add Image
+
+Paste the following into the command, and click “Next”:
+
+Bash
+scripts/pull_data.py
+
+ # Add Image
+
+Have Domino Run the script every month on the 1st of the  month.
+
+Under notify emails, tag yourself to be notified when the job runs - and Create!
+
+### Lab 2.6 - Create a Launmcher
+
+TBD
 
 
-## Section 3 - Deploy Model
+## Section 3 - Create Applications
 
-### Lab 3.1 Deploying Model API Endpoint
-
-Now that you have completed model training and selection - it's time to get your model deployed.
-
-In the last lab - we trained a sklearn model and saved it to a serialized (pickle) file. To deploy this trained model - we'll use a script to load in the saved model object and pass new records for scoring. 
-
-To do so - navigate to the **Model APIs** tab in your project. Click **New Model**.
-
-<p align="center">
-<img src = readme_images/NewModelAPI.png width="800">
-</p>
-
-Name your model 'wine-model-yourname'
-    
-For the description add the following 
-    
-```
-Model Endpoint to determine the quality of wine
-
-Sample Scoring Request: 
-    
-{
-  "data": {
-    "density":0.99,
-    "volatile_acidity": 0.028,
-    "chlorides": 0.05 ,
-    "is_red":0,
-    "alcohol": 11
-  }
-}
-```
-    
-Be sure to check the box *Log HTTP requests and responses to model instance logs* 
-
-<p align="center">
-<img src = readme_images/NewModelAPIConfig1.png width="800">
-</p>    
-
-Click **Next**. On the next page - 
-    
-For **Choose an Environment** select
-`Domino-Workshop-Environment`
-
-For **The file containing the code to invoke (must be a Python or R file)** enter
-
-`scripts/predict.py`
-    
-For **The function to invoke** enter
-    
-`predict`
-    
-And click **Create Model**
-    
-<p align="center">
-<img src = readme_images/NewModelAPIConfig.png width="800">
-</p>        
-  
-Over the next 2-5 minutes, you'll see the status of your model go from Preparing to Build -> Building -> Starting -> Running
-<p align="center">
-<img src = readme_images/ModelAPIBuilding.png width="800">
-</p>        
-    
-    
-Once your model reaches the Running state - a pod containing your model object and code for inference is up and ready to accept REST API calls.
-
-To test your model navigate to the Overview tab. In the request field in the Tester tab enter a scoring request in JSON form. You can copy the sample request that you defined in your description field.
-    
-<p align="center">
-<img src = readme_images/ScoringRequest.png width="800">
-</p>        
-    
-In the response box you will see a **prediction** value representing your model's predicted quality for a bottle of wine with the attributes defined in the Request box. Try changing 'is_red' from 0 to 1 and 'alcohol' from 11 to 5 to see how the predicted quality differs. Feel free to play around with different values in the Request box.
-
-After you have sent a few scoring requests to the model endpoint, check out the instance logs by clicking the Instance Logs button. Here you can see that all scoring requests to the model complete with model inputs, responses, response times, errors, warnings etc. are being logged. Close the browser tab that you were viewing the instance logs in. 
-
-Now, back on your model's overview page - note that there are several tabs next to the **Tester** tab that provide code snippets to score our model from a web app, command line, or other external source.
-
-In the next lab we will deploy an R shiny app that exposes a front end for collecting model input, passing that input to the model, then parsing the model's response to a dashboard for consumption.
 
 ### Lab 3.2 Deploying Web App
     
