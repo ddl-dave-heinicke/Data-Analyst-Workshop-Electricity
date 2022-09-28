@@ -379,57 +379,38 @@ To simply run our code in our predefined environment and quickly visualize outpu
 </p>
 
 
-In this example, we want to pull some more recent data from BMRS and save it to the Domino File System.
+In this example, we want to pull some more recent September data from BMRS and save it to the Domino File System.
 
-Click on Run, copy the following command, and paste it into the Run Command:
+Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
 
-```shell
-scripts/multitrain.py
-```
+# Update
 
-Check out the code in the script and comments describing the purpose of each line of code.
-
-You can also check out any of the training scripts that multitrain.py will call.
-
-Now switch into your other browser tab to return to your domino project. Navigate to the Jobs page. Click on **Run**.
+**Run**.
 
 <p align="center">
 <img src = readme_images/Jobspage.png width="800">
 </p>
 
-Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
-
 ```shell
-scripts/multitrain.py
+'scripts/pull_data.py' '--start=2022-09-01 00:00:00' '--end=2022-09-27 00:00:00'
 ```
-
+# Update
 <p align="center">
 <img src = readme_images/Jobsrun.png width="800">
-</p>
-
-Watch as three job runs have appeared, you may see them in starting, running or completed state.
-
-<p align="center">
-<img src = readme_images/Jobs.png width="800">
 </p>
 
 Click into the sklearn_model_train.py job run.
 
 In the details tab of the job run note that the compute environment and hardware tier are tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
 
-<p align="center">
-<img src = readme_images/sklearnRunDetails.png width="800">
-</p>
+In the details tab of the job run note that the compute environment is tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
 
+Now, click into Domino Datasets and examine the contents in “Power Generation Workshop”. September data should be there. 
 
-Click on the Results tab of the job. Scroll down to view the visualizations and other outputs of the job.
+# Add Datasets Image
 
-<p align="center">
-<img src = readme_images/sklearnResults.png width="800">
-</p>
+In this example, we pushed the results to Dominio Datasets, but results could be pushed back to any attached data source such as S3, Snowflake etc.
 
-
-We've now trained 3 models and it is time to select which model we'd like to deploy.
 
 **Refresh the page**. Inspect the table and graph to understand the R^2 value and Mean Squared Error (MSE) for each model. From our results it looks like the sklearn model is the best candidate to deploy.
 

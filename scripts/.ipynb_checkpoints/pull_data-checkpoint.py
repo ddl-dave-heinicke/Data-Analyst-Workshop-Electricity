@@ -1,12 +1,13 @@
 #import the packages we need
 import pandas as pd
-# import numpy as np
 import datetime
 import os
 import sys
 import argparse
 import requests
 import csv
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 def pull_data(start=None, end=None):
     
@@ -85,6 +86,45 @@ def pull_data(start=None, end=None):
     consolidated_data.to_csv('/mnt/data/PowerGenerationWorkshop/PowerGenerationData_{}_to_{}.csv'.format(str(start_date), str(end_date)), index=False)
     
     print(consolidated_data.head())
+
+    # Vizualize the pulled data
+    
+    df = consolidated_data.copy()
+    
+    # Create total output feature: sum of all fuel sources.
+    df['TOTAL'] = df.sum(axis=1, numeric_only=True)
+
+    # Select CCGT, Wind, Nuclear, Biomass and Coal & create "Other" column
+    plot_cols = ['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL', 'TOTAL']
+
+    df_plot = df[plot_cols].copy()
+
+    df_plot['OTHER'] = df_plot['TOTAL'] - df_plot[['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL']].sum(axis=1, numeric_only=True)
+
+    # Plot Cumulative production up to prediction point
+    x = df.datetime
+    y = [df.NUCLEAR, df.BIOMASS, df.COAL, df.OTHER, df.WIND, df.CCGT,]
+
+    fig, ax = plt.subplots(1,1, figsize=(12,8))
+
+    colors = ['tab:red','tab:olive', 'tab:gray','tab:orange','tab:green','tab:blue']
+
+    ax.stackplot(x,y,
+                 labels=['NUCLEAR', 'BIOMASS', 'COAL', 'OTHER', 'WIND', 'CCGT (GAS)'],
+                 colors=colors,
+                 alpha=0.8)
+
+    # Format the stack plot
+    ax.legend(bbox_to_anchor=(1.25, 0.6), loc='right', fontsize=14)
+    ax.xaxis.set_major_locator(mdates.DayLocator(interval=7))
+    plt.xticks(rotation=45, ha='right', fontsize=12)
+    ax.set_ylabel('Total Production, MW', fontsize=16)
+    ax.set_title('Cumulative Production, Summer 2022, MW', fontsize=16)
+
+    # Save the figure as an image to the Domino File System
+    fig.savefig('/mnt/visualizations/Cumulative Production.png', bbox_inches="tight")
+
+    plt.show()
     
 if __name__ == "__main__":
     
