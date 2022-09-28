@@ -84,6 +84,8 @@ def pull_data(start=None, end=None):
     # Save the consolidated data back to the project
     consolidated_data.to_csv('/mnt/data/PowerGenerationWorkshop/PowerGenerationData_{}_to_{}.csv'.format(str(start_date), str(end_date)), index=False)
     
+    print(consolidated_data.head())
+    
 if __name__ == "__main__":
     
     # Pass start and end dates. If no start time is provided, default to Jan 1, 2019.
