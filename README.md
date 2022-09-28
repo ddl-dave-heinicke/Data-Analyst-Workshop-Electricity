@@ -287,6 +287,27 @@ sns.histplot(daily_peak_df.index.hour, stat='count', bins=10)
 plt.savefig('Peak Demand Hours.png', bbox_inches="tight")
 plt.show()
 ```
+```python
+# Extract the month from the daily peak power dataframe
+daily_peak_df['Month'] = daily_peak_df.index
+daily_peak_df['Month'] = daily_peak_df['Month'].apply(lambda x: x.strftime('%b'))
+
+# Group minimal sources into "Other" for simplicity
+daily_peak_df['OTHER'] = daily_peak_df['TOTAL'] - daily_peak_df[['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL']].sum(axis=1, numeric_only=True)
+daily_peak_df = daily_peak_df[['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL', 'OTHER', 'Month']]
+
+# Group By Month
+monthly_totals = daily_peak_df.groupby('Month').sum()
+
+# Plot the contribution of each source by month
+colors = ['tab:blue','tab:green', 'tab:red','tab:olive','tab:gray','tab:orange']
+labels= monthly_totals.columns 
+
+for i, row in monthly_totals.iterrows():
+    plt.figure(figsize=(8,5))
+    plt.title('Total Contribution to Peak Production by Source, Month: {}'.format(i))
+    plt.pie(row, labels=labels, colors=colors, autopct='%1.1f%%')
+```python    
 
 Finally write your data to a Domino Dataset by running:
 

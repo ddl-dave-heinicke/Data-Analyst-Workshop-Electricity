@@ -1,12 +1,11 @@
 ## Domino Hands-On Workshop: Analyzing Electricity Production in the UK
 
-#### In this workshop you will work through an end-to-end workflow broken into various labs to -
+#### In this workshop you will work through an end-to-end workflow broken into various labs to
 
 * Create a Domino Project, invite colaborators & set up project communication
 * Create a laptop in the cloud - or a Domino Workspace
-* Read in and vizualize historic data from a connected source - an s3 bucket.
-* Read in and process data from a live source
-* Using that live source - create a scheduled job to create a scheduled report
+* Read in and vizualize historic data from a connected source.
+* Run & schedule jobs to read in and process data from a live source
 * Building a hosted app to predict electric genration
 
 # Section 1 - Project Set Up
@@ -36,7 +35,7 @@ In the top right corner, choose the icon to **fork** the project. Name the proje
 
 In your new project - go into the settings tab
 
-View the default hardware tier and compute environment - ensure they are set to 'Small' and 'Domino-Workshop-Environment' respectively:
+View the default hardware tier and compute environment - ensure the environment is set to 'Domino-Workshop-Environment':
 
 <!-- ![image](readme_images/ProjectSettings.png) -->
 
@@ -137,6 +136,14 @@ This concludes all labs in section 1 - Prepare Project and Data!
 
 ### Lab 2.1 - Exploring Workspaces
 
+Our goal in Section 2 is to take a look at power production data in the UK in the summer of 2022 (June-August). We'll vizualise the 
+production data, then identify the hour in each day where production peaked, so that we can see the breakdown of energy sources
+when the grid is peaking.
+
+We'll do this in an interactive Dominio Workspace - which you can think of as a laptop in the cloud.
+
+#### Launch a Workspace
+
 In the top right corner click Create New Workspace.
 
 <p align="center">
@@ -145,30 +152,32 @@ In the top right corner click Create New Workspace.
 
 Type a name for the Workspace in the 'Workspace Name' cell and next click through the available Compute Environments in the Workspace Environment drop down button. Next, ensure that Domino-Workspace-Environment is selected.
 
-Select JupyterLab as the Workspace IDE
+Select JupyterLab as the Workspace IDE.
 
-Click the Hardware Tier dropdown to browse all available hardware configurations - ensure that Small is selected. 
-
-Click Launch now.
+Click Launch.
 
 <p align="center">
 <img src = readme_images/LaunchWorkspace.png width="800">
 </p>
 
+# Update
 Once the workspace is launched, create a new python notebook by clicking here:
 
 <p align="center">
 <img src = readme_images/NewNotebook.png width="800">
 </p>
 
+#### Read in Data from S3
+
 Once your notebook is loaded, click on the left blue menu and click on the Data page, then onto the data source we added in lab 1 as displayed below
 
+# Update
 <p align="center">
 <img src = readme_images/DataTab.png width="800">
 </p>
 
 Copy the provided code snippet into your notebook and run the cell
-
+# Update
 <p align="center">
 <img src = readme_images/S3CodeSnippet.png width="800">
 </p>
@@ -179,50 +188,135 @@ After running the code snippet. Copy the code below into the following cell
 from io import StringIO
 import pandas as pd
 
-s=str(object_store.get("WineQualityData.csv"),'utf-8')
+s = str(object_store.get("PowerGenerationData_Summer_2022.csv"),'utf-8')
 data = StringIO(s) 
 
-df=pd.read_csv(data)
+df = pd.read_csv(data, parse_dates=['datetime'])
 df.head()
 ```
 
 Now cell by cell, copy the code snippets below and run the cells to visualize and prepare the data! (You can click on the '+' icon to add a blank cell after the current cell)
 
+#### Vizualize Monthly Production.
+
+There are many fuel types in the dataset. To improve vizualization, we will only select the following columns, and group the minor fuel sources togetehr into "Other".
+
+Fuel Sources to plot:  
+CCGT - Combined Cycle Gas Turbines (natural gas)  
+Wind  
+Nuclear  
+Biomass  
+Coal
+All Others - Summed Togetehr in "Other"
+
 ```python
-import seaborn as sns
 import matplotlib.pyplot as plt
-df['is_red'] = df.type.apply(lambda x : int(x=='red'))
-fig = plt.figure(figsize=(10,10))
-sns.heatmap(df.corr(), annot = True, fmt='.1g')
+import matplotlib.dates as mdates
+
+# Create total output feature: sum of all fuel sources.
+df['TOTAL'] = df.sum(axis=1, numeric_only=True)
+
+# Select CCGT, Wind, Nuclear, Biomass and Coal & create "Other" column
+plot_cols = ['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL', 'TOTAL']
+
+df_plot = df[plot_cols].copy()
+
+df_plot['OTHER'] = df_plot['TOTAL'] - df_plot[['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL']].sum(axis=1, numeric_only=True)
+
+# Plot Cumulative production up to prediction point
+x = df.datetime
+y = [df.NUCLEAR, df.BIOMASS, df.COAL, df.OTHER, df.WIND, df.CCGT,]
+
+fig, ax = plt.subplots(1,1, figsize=(12,8))
+
+colors = ['tab:red','tab:olive', 'tab:gray','tab:orange','tab:green','tab:blue']
+
+ax.stackplot(x,y,
+             labels=['NUCLEAR', 'BIOMASS', 'COAL', 'OTHER', 'WIND', 'CCGT (GAS)'],
+             colors=colors,
+             alpha=0.8)
+
+
+# Format the stack plot
+ax.legend(bbox_to_anchor=(1.25, 0.6), loc='right', fontsize=14)
+ax.xaxis.set_major_locator(mdates.DayLocator(interval=7))
+plt.xticks(rotation=45, ha='right', fontsize=12)
+ax.set_ylabel('Total Production, MW', fontsize=16)
+ax.set_title('Cumulative Production, Summer 2022, MW', fontsize=16)
+
+# Save the figure as an image to the Domino File System
+fig.savefig('Cumulative Production.png', bbox_inches="tight")
+
+plt.show()
 ```
+#### Identify hours when the grid peaks each day 
+
+Now that we've saved our image, we can extract peak demand from the raw data.
 
 ```python
-corr_values = df.corr().sort_values(by = 'quality')['quality'].drop('quality',axis=0)
-important_feats=corr_values[abs(corr_values)>0.08]
-print(important_feats)
-sns.set_theme(style="darkgrid")
-plt.figure(figsize=(16,5))
-plt.title('Feature Importance for Wine Quality')
-plt.ylabel('Pearson Correlation')
-sns.barplot(important_feats.keys(), important_feats.values, palette='seismic_r')
+# Read in 30 minute data
+s = str(object_store.get("PowerGenerationData_Summer_2022.csv"),'utf-8')
+data = StringIO(s) 
+daily_peak_df = pd.read_csv(data, parse_dates=['datetime'])
+
+# Set the index to the timestamp, and create a column of TOTAL demand by row
+daily_peak_df = daily_peak_df.set_index('datetime')
+daily_peak_df = daily_peak_df.drop(['HDF'], axis=1)
+daily_peak_df['TOTAL'] = daily_peak_df.sum(axis=1)
+
+# Group 30 minute data by day, grab the index of the 30-minute interval when the daily demand peaks
+idx = daily_peak_df.groupby(pd.Grouper(freq='D'))['TOTAL'].transform(max) == daily_peak_df['TOTAL']
+
+# Verify there are no duplicate Maximum values in a single day in the dataset
+print(daily_peak_df[idx].shape)
+
+# Print a table with the daily Maximum values, and time when demand peaked
+daily_peak_df = daily_peak_df[idx]
+
+daily_peak_df.head()
+```
+We can also vizualize the hours of the day when demand peaks, and save our plot.
+
+```python
+plt.figure(figsize=(8,5))
+plt.title('Hours in the day When Demand Peaks in the UK, Summer 2022')
+plt.xlabel('Hour of the Day')
+sns.histplot(daily_peak_df.index.hour, stat='count', bins=10)
+plt.savefig('Peak Demand Hours.png', bbox_inches="tight")
+plt.show()
 ```
 ```python
-for i in list(important_feats.keys())+['quality']:
+# Extract the month from the daily peak power dataframe
+daily_peak_df['Month'] = daily_peak_df.index
+daily_peak_df['Month'] = daily_peak_df['Month'].apply(lambda x: x.strftime('%b'))
+
+# Group minimal sources into "Other" for simplicity
+daily_peak_df['OTHER'] = daily_peak_df['TOTAL'] - daily_peak_df[['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL']].sum(axis=1, numeric_only=True)
+daily_peak_df = daily_peak_df[['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL', 'OTHER', 'Month']]
+
+# Group By Month
+monthly_totals = daily_peak_df.groupby('Month').sum()
+
+# Plot the contribution of each source by month
+colors = ['tab:blue','tab:green', 'tab:red','tab:olive','tab:gray','tab:orange']
+labels= monthly_totals.columns 
+
+for i, row in monthly_totals.iterrows():
     plt.figure(figsize=(8,5))
-    plt.title('Histogram of {}'.format(i))
-    sns.histplot(df[i], kde=True)
-```
+    plt.title('Total Contribution to Peak Production by Source, Month: {}'.format(i))
+    plt.pie(row, labels=labels, colors=colors, autopct='%1.1f%%')
+```python    
 
-Finally write your data to a Domino Dataset by running
+Finally write your data to a Domino Dataset by running:
 
 ```python
 import os
-path = str('/domino/datasets/local/{}/WineQualityData.csv'.format(os.environ.get('DOMINO_PROJECT_NAME')))
-df.to_csv(path, index = False)
+path = str('/domino/datasets/local/{}/Daily_Peak_Production_Summer_2022.csv'.format(os.environ.get('DOMINO_PROJECT_NAME')))
+daily_peak_df.to_csv(path, index = False)
 ```
 
 Your notebook should be populated like the display below.
-
+#Update
 <!-- ![image](readme_images/EDAView.png) -->
 
 <p align="center">
@@ -268,7 +362,7 @@ Click the ellipses on the goal to mark the goal as complete
 </p>
 
 
-### Lab 2.4 - Run and Track Experiments
+### Lab 2.4 - Run and Track Jobs
 
 Now it's time to train our models! 
 
