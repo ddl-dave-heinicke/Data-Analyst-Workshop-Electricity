@@ -35,7 +35,7 @@ In the top right corner, choose the icon to **fork** the project. Name the proje
 
 In your new project - go into the settings tab
 
-View the default hardware tier and compute environment - ensure the environment is set to 'Domino-Workshop-Environment':
+View the default hardware tier and compute environment - ensure the environment is set to 'Domino-PowerGeneration-Workshop-Environment':
 
 <!-- ![image](readme_images/ProjectSettings.png) -->
 
@@ -197,17 +197,18 @@ df.head()
 
 Now cell by cell, copy the code snippets below and run the cells to visualize and prepare the data! (You can click on the '+' icon to add a blank cell after the current cell)
 
-#### Vizualize Monthly Production.
+#### Visualize Monthly Production
 
-There are many fuel types in the dataset. To improve vizualization, we will only select the following columns, and group the minor fuel sources togetehr into "Other".
+There are many fuel types in the dataset. To improve visualization, we will only select the following columns, and group the minor fuel sources together into "Other".
 
 Fuel Sources to plot:  
 CCGT - Combined Cycle Gas Turbines (natural gas)  
 Wind  
 Nuclear  
 Biomass  
-Coal
-All Others - Summed Togetehr in "Other"
+Coal  
+All Others - Summed Together in "Other"
+
 
 ```python
 import matplotlib.pyplot as plt
