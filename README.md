@@ -278,6 +278,8 @@ daily_peak_df.head()
 We can also vizualize the hours of the day when demand peaks, and save our plot.
 
 ```python
+import seaborn as sns
+
 plt.figure(figsize=(8,5))
 plt.title('Hours in the day When Demand Peaks in the UK, Summer 2022')
 plt.xlabel('Hour of the Day')
