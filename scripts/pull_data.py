@@ -122,7 +122,7 @@ def pull_data(start=None, end=None):
     ax.set_title('Cumulative Production, Summer 2022, MW', fontsize=16)
 
     # Save the figure as an image to the Domino File System
-    fig.savefig('/mnt/visualizations/Cumulative Production.png', bbox_inches="tight")
+    fig.savefig('/mnt/code/visualizations/Cumulative Production.png', bbox_inches="tight")
 
     plt.show()
     
