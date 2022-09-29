@@ -326,7 +326,7 @@ Rename your notebook 'EDA_code.ipynb' by right clicking on the file name as show
 <img src = readme_images/RenameAndSaveNotebook.png width="800">
 </p>
 
-### Lab 2.3 - Syncing Files
+### Lab 2.2 - Syncing Files
 
 All of the changes we have made so far are saved in our workspace, and can be retrieved anytime we open this workspace. It’s as if we have saved changes to our local machine. However, to make our code updates visible to collaborators and available to other workspaces, we want to sync our work back to the project files.
 
@@ -360,7 +360,7 @@ Click the ellipses on the goal to mark the goal as complete
 </p>
 
 
-### Lab 2.4 - Run and Track Jobs
+### Lab 2.3 - Run and Track Jobs
 
 Workspaces are great environments for doing exploratory work and writing code. However, once our code is finished, we may want to run it regularly- which would be tedious if we have to spin up a workspace each time.
 
@@ -395,7 +395,7 @@ Now, click into Domino Datasets and examine the contents in “Power Generation 
 <img src = readme_images/UpdatedDataJob.png width="800">
 </p>
 
-### Lab 2.5 - Schedule Jobs
+### Lab 2.4 - Schedule Jobs
 
 Say we wanted to pull the data each month. Rather than running this job manually, we can schedule the job to run in Domino.
 
@@ -428,7 +428,7 @@ Under notify emails, tag yourself to be notified when the job runs - and Create!
 <img src = readme_images/SetJobNotification.png width="800">
 </p>
 
-### Lab 2.6 - Create a Launcher
+### Lab 2.5 - Create a Launcher
 
 # TBD
 
@@ -436,7 +436,7 @@ Under notify emails, tag yourself to be notified when the job runs - and Create!
 ## Section 3 - Create Applications
 
 
-### Lab 3.2 Deploying Web App
+### Lab 3.1 Deploying Web App
     
 Static reports and dashboards are a useful way to consume data and insights, but taking the next step to an interactive application can go further and deriving value from your data. Domino's open platform allows you to build and host apps in many different frameworks, such as Dash, Shiny, Steamlit and others. Once Domino has spun up the app for you, you can share it with your colleagues, even if they do not have Domino licenses.
 
@@ -487,6 +487,8 @@ Now navigate back into the Files tab, and enter the **scripts** folder. Click ad
 <p align="center">
 <img src = readme_images/SavePythonApp.png width="800">
 </p> 
+
+Copy all of the following code into `app.py`:
 
 ```python
 # -*- coding: utf-8 -*-
@@ -763,7 +765,7 @@ From here, you can zoom into a single week to see the model's forecast.
 Try playing around with the training start date - sometimes time series models perform better with longer histories, sometimes shorter, depending on how quickly the generation profile in the UK is changing.
 
 
-## Section 4 - Collaborate Results
+## Section 4 - Share Results
 
 ### Lab 4.1 - Share Web App and Model API
 
