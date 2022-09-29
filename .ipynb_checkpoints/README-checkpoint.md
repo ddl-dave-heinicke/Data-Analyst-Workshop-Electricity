@@ -395,8 +395,6 @@ Now, click into Domino Datasets and examine the contents in “Power Generation 
 <img src = readme_images/UpdatedDataJob.png width="800">
 </p>
 
-# Pick Up Here
-
 ### Lab 2.5 - Schedule Jobs
 
 Say we wanted to pull the data each month. Rather than running this job manually, we can schedule the job to run in Domino.
@@ -405,22 +403,34 @@ The script we ran manually, pull_data.py, defaults to pulling the past 30 days i
 
 Navigate to “Scheduled Jobs” under “Publish”, and select, “New Scheduled Job”
 
-# Add Image
+<p align="center">
+<img src = readme_images/NewScheduleJob.png width="800">
+</p>
 
-Paste the following into the command, and click “Next”:
+Paste the following into the command, give the job the name "Monthly Data Pull", and verify that the Environment is "Domino-PowerGeneration-Workshop-Environment". It should be, since we set it as our project environemnt, but it's always good to check. Click “Next”. 
 
-Bash
+```shell
 scripts/pull_data.py
-
- # Add Image
+```
+<p align="center">
+<img src = readme_images/SetJobDefinition.png width="800">
+</p>
 
 Have Domino Run the script every month on the 1st of the  month.
 
+<p align="center">
+<img src = readme_images/SetJobSchedule.png width="800">
+</p>
+
 Under notify emails, tag yourself to be notified when the job runs - and Create!
 
-### Lab 2.6 - Create a Launmcher
+<p align="center">
+<img src = readme_images/SetJobNotification.png width="800">
+</p>
 
-TBD
+### Lab 2.6 - Create a Launcher
+
+# TBD
 
 
 ## Section 3 - Create Applications
