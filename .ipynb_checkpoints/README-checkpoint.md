@@ -1,6 +1,6 @@
 ## Domino Hands-On Workshop: Analyzing Electricity Production in the UK
 
-#### In this workshop you will work through an end-to-end workflow broken into various labs to
+#### In this workshop you will work through an end-to-end workflow broken into various labs to:
 
 * Create a Domino Project, invite colaborators & set up project communication
 * Create a laptop in the cloud - or a Domino Workspace
@@ -13,9 +13,8 @@
 ### Lab 1.1 - Forking Existing Projects
 Once you have access to the Domino training environment - Guide your mouse to the left blue menu and click the **Search** page. Afterwards, type the word 'Training' in the cell provided and click enter to discover any projects tagged under 'Training'. (The left blue menu shrinks to show only the icon of the pages. Unshrink the left blue menu by guiding your mouse over the icon pages.)
 
-Select the project called PowerGeneration
+Select the project called PowerGenerationWorkshop
 
-# update image
 <!-- ![image](readme_images/Search.png) -->
 
 <p align="center">
@@ -26,7 +25,6 @@ Read the readme to learn more about the project's use case, status, etc.
 
 In the top right corner, choose the icon to **fork** the project. Name the project *Domino-Training-yourname*
 
-# update image
 <!-- ![image](readme_images/Fork.png) -->
 
 <p align="center">
@@ -130,7 +128,9 @@ The data source should look like the image below
 <img src = readme_images/S3done.png width="800">
 </p>
 
-This concludes all labs in section 1 - Prepare Project and Data! 
+This concludes all labs in section 1.
+
+We have now created a project, added collaborators and attached a data source.
 
 ## Section 2 - Work With Historic Data
 
@@ -319,7 +319,8 @@ daily_peak_df.to_csv(path, index = False)
 ```
 
 Your notebook should be populated like the display below.
-#Update
+
+# Update
 <!-- ![image](readme_images/EDAView.png) -->
 
 <p align="center">
@@ -336,6 +337,7 @@ Rename your notebook 'EDA_code.ipynb' by right clicking on the file name as show
 
 Now that we've finished working on our notebook and written data back to our project, we want to sync our latest work. To do so click on the File Changes tab in the top left corner of your screen - 
 
+# Update
 <p align="center">
 <img src = readme_images/SyncProject.png width="800">
 </p>
@@ -346,6 +348,7 @@ Click the Domino logo on the upper left corner of the blue menu and select on th
 
 Notice that the latest commit will reflect the commit message you just logged and you can see 'EDA_code.ipynb' in your file directory.
 
+ # Update
 <p align="center">
 <img src = readme_images/DFS.png width="800">
 </p>
@@ -367,145 +370,76 @@ Click the ellipses on the goal to mark the goal as complete
 
 ### Lab 2.4 - Run and Track Jobs
 
-Now it's time to train our models! 
+Workspaces are great environments for doing exploratory work and writing code. However, once our code is finished, we may want to run it regularly- which would be tedious if we have to spin up a workspace each time.
 
-We are taking a three pronged approach and building a model in sklearn (python), xgboost (R), and an auto-ml ensemble model (h2o).
+To simply run our code in our predefined environment and quickly visualize outputs, Domino has a feature called Jobs. Jobs spin up an instance, run a script, save outputs, and shut down the instance for us.
 
-First, navigate back to your JupyterLab workspace tab. In your file browser go into the scripts folder and inspect 'multitrain.py'
-
+# Jobs Image
 <p align="center">
 <img src = readme_images/MultiTrain.png width="800">
 </p>
 
-Check out the code in the script and comments describing the purpose of each line of code.
 
-You can also check out any of the training scripts that multitrain.py will call.
+In this example, we want to pull some more recent September data from BMRS and save it to the Domino File System.
 
-Now switch into your other browser tab to return to your domino project. Navigate to the Jobs page. Click on **Run**.
+Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
+
+# Update
+
+**Run**.
 
 <p align="center">
 <img src = readme_images/Jobspage.png width="800">
 </p>
 
-Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
-
 ```shell
-scripts/multitrain.py
+scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-27 00:00:00'
 ```
-
+# Update
 <p align="center">
 <img src = readme_images/Jobsrun.png width="800">
 </p>
 
-Watch as three job runs have appeared, you may see them in starting, running or completed state.
-
-<p align="center">
-<img src = readme_images/Jobs.png width="800">
-</p>
-
-Click into the sklearn_model_train.py job run.
+Click into the pull_data.py job run.
 
 In the details tab of the job run note that the compute environment and hardware tier are tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
 
-<p align="center">
-<img src = readme_images/sklearnRunDetails.png width="800">
-</p>
+In the details tab of the job run note that the compute environment is tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
+
+Now, click into Domino Datasets and examine the contents in “Power Generation Workshop”. September data should be there. 
+
+# Add Datasets Image
+
+In this example, we pushed the results to Dominio Datasets, but results could be pushed back to any attached data source such as S3, Snowflake etc.
+
+### Lab 2.5 - Schedule Jobs
+
+Say we wanted to pull the data each month. Rather than running this job manually, we can schedule the job to run in Domino.
+
+The script we ran manually, pull_data.py, defaults to pulling the past 30 days if we don't pass it an start and end date, so we can simply schedule it to run each month.
+
+Navigate to “Scheduled Jobs” under “Publish”, and select, “New Scheduled Job”
+
+# Add Image
+
+Paste the following into the command, and click “Next”:
+
+Bash
+scripts/pull_data.py
+
+ # Add Image
+
+Have Domino Run the script every month on the 1st of the  month.
+
+Under notify emails, tag yourself to be notified when the job runs - and Create!
+
+### Lab 2.6 - Create a Launmcher
+
+TBD
 
 
-Click on the Results tab of the job. Scroll down to view the visualizations and other outputs of the job.
+## Section 3 - Create Applications
 
-<p align="center">
-<img src = readme_images/sklearnResults.png width="800">
-</p>
-
-
-We've now trained 3 models and it is time to select which model we'd like to deploy.
-
-**Refresh the page**. Inspect the table and graph to understand the R^2 value and Mean Squared Error (MSE) for each model. From our results it looks like the sklearn model is the best candidate to deploy.
-
-In the next section of labs we will deploy the model we trained here!
-
-
-## Section 3 - Deploy Model
-
-### Lab 3.1 Deploying Model API Endpoint
-
-Now that you have completed model training and selection - it's time to get your model deployed.
-
-In the last lab - we trained a sklearn model and saved it to a serialized (pickle) file. To deploy this trained model - we'll use a script to load in the saved model object and pass new records for scoring. 
-
-To do so - navigate to the **Model APIs** tab in your project. Click **New Model**.
-
-<p align="center">
-<img src = readme_images/NewModelAPI.png width="800">
-</p>
-
-Name your model 'wine-model-yourname'
-    
-For the description add the following 
-    
-```
-Model Endpoint to determine the quality of wine
-
-Sample Scoring Request: 
-    
-{
-  "data": {
-    "density":0.99,
-    "volatile_acidity": 0.028,
-    "chlorides": 0.05 ,
-    "is_red":0,
-    "alcohol": 11
-  }
-}
-```
-    
-Be sure to check the box *Log HTTP requests and responses to model instance logs* 
-
-<p align="center">
-<img src = readme_images/NewModelAPIConfig1.png width="800">
-</p>    
-
-Click **Next**. On the next page - 
-    
-For **Choose an Environment** select
-`Domino-Workshop-Environment`
-
-For **The file containing the code to invoke (must be a Python or R file)** enter
-
-`scripts/predict.py`
-    
-For **The function to invoke** enter
-    
-`predict`
-    
-And click **Create Model**
-    
-<p align="center">
-<img src = readme_images/NewModelAPIConfig.png width="800">
-</p>        
-  
-Over the next 2-5 minutes, you'll see the status of your model go from Preparing to Build -> Building -> Starting -> Running
-<p align="center">
-<img src = readme_images/ModelAPIBuilding.png width="800">
-</p>        
-    
-    
-Once your model reaches the Running state - a pod containing your model object and code for inference is up and ready to accept REST API calls.
-
-To test your model navigate to the Overview tab. In the request field in the Tester tab enter a scoring request in JSON form. You can copy the sample request that you defined in your description field.
-    
-<p align="center">
-<img src = readme_images/ScoringRequest.png width="800">
-</p>        
-    
-In the response box you will see a **prediction** value representing your model's predicted quality for a bottle of wine with the attributes defined in the Request box. Try changing 'is_red' from 0 to 1 and 'alcohol' from 11 to 5 to see how the predicted quality differs. Feel free to play around with different values in the Request box.
-
-After you have sent a few scoring requests to the model endpoint, check out the instance logs by clicking the Instance Logs button. Here you can see that all scoring requests to the model complete with model inputs, responses, response times, errors, warnings etc. are being logged. Close the browser tab that you were viewing the instance logs in. 
-
-Now, back on your model's overview page - note that there are several tabs next to the **Tester** tab that provide code snippets to score our model from a web app, command line, or other external source.
-
-In the next lab we will deploy an R shiny app that exposes a front end for collecting model input, passing that input to the model, then parsing the model's response to a dashboard for consumption.
 
 ### Lab 3.2 Deploying Web App
     

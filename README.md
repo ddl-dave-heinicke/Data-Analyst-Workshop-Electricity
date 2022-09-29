@@ -1,6 +1,6 @@
 ## Domino Hands-On Workshop: Analyzing Electricity Production in the UK
 
-#### In this workshop you will work through an end-to-end workflow broken into various labs to
+#### In this workshop you will work through an end-to-end workflow broken into various labs to:
 
 * Create a Domino Project, invite colaborators & set up project communication
 * Create a laptop in the cloud - or a Domino Workspace
@@ -13,9 +13,8 @@
 ### Lab 1.1 - Forking Existing Projects
 Once you have access to the Domino training environment - Guide your mouse to the left blue menu and click the **Search** page. Afterwards, type the word 'Training' in the cell provided and click enter to discover any projects tagged under 'Training'. (The left blue menu shrinks to show only the icon of the pages. Unshrink the left blue menu by guiding your mouse over the icon pages.)
 
-Select the project called PowerGeneration
+Select the project called PowerGenerationWorkshop
 
-# update image
 <!-- ![image](readme_images/Search.png) -->
 
 <p align="center">
@@ -26,7 +25,6 @@ Read the readme to learn more about the project's use case, status, etc.
 
 In the top right corner, choose the icon to **fork** the project. Name the project *Domino-Training-yourname*
 
-# update image
 <!-- ![image](readme_images/Fork.png) -->
 
 <p align="center">
@@ -130,7 +128,9 @@ The data source should look like the image below
 <img src = readme_images/S3done.png width="800">
 </p>
 
-This concludes all labs in section 1 - Prepare Project and Data! 
+This concludes all labs in section 1.
+
+We have now created a project, added collaborators and attached a data source.
 
 ## Section 2 - Work With Historic Data
 
