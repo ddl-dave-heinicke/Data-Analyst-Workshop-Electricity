@@ -11,7 +11,7 @@ import os
 import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
-# from fbprophet import Prophet
+from fbprophet import Prophet
 import plotly.graph_objs as go
  
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -100,7 +100,6 @@ app.layout = html.Div(style={'paddingLeft': '40px', 'paddingRight': '40px'}, chi
     Output('prediction_graph', 'figure'),
     [Input('fuel_type', 'value'),
      Input('date-picker', 'date')])
-
 def update_output(fuel_type, start_date):
     today = datetime.datetime.today().strftime('%Y-%m-%d')
     start_date_reformatted = start_date.split('T')[0]
@@ -123,7 +122,7 @@ def update_output(fuel_type, start_date):
     m.fit(df_for_prophet)
     future = m.make_future_dataframe(periods=72, freq='H')
     fcst = m.predict(future)
-    from https://github.com/facebook/prophet/blob/master/python/fbprophet/plot.py
+    # from https://github.com/facebook/prophet/blob/master/python/fbprophet/plot.py
     data = []
     # Add actual
     data.append(go.Scatter(
