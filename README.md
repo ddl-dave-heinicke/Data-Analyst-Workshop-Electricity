@@ -407,7 +407,7 @@ Navigate to “Scheduled Jobs” under “Publish”, and select, “New Schedul
 <img src = readme_images/NewScheduleJob.png width="800">
 </p>
 
-Paste the following into the command, give the job the name "Monthly Data Pull", and verify that the Environment is "Domino-PowerGeneration-Workshop-Environment". It should be, since we set it as our project environemnt, but it's always good to check. Click “Next”. 
+Paste the following unde "File Name or Command", give the job the name "Monthly Data Pull", and verify that the Environment is "Domino-PowerGeneration-Workshop-Environment". It should be, since we set it as our project environemnt, but it's always good to check. Click “Next”. 
 
 ```shell
 scripts/pull_data.py
@@ -438,14 +438,20 @@ Under notify emails, tag yourself to be notified when the job runs - and Create!
 
 ### Lab 3.2 Deploying Web App
     
-Now that we have a pod running to serve new model requests - we will build out a front end to make calling our model easier for end-users.
+Static reports and dashboards are a useful way to consume data and insights, but taking the next step to an interactive application can go further and deriving value from your data. Domino's open platform allows you to build and host apps in many different frameworks, such as Dash, Shiny, Steamlit and others. Once Domino has spun up the app for you, you can share it with your colleagues, even if they do not have Domino licenses.
+
+In this lab, we won't go through the details of building an app with one of the avaialbe frameworks. We'll take an existing app script built in Dash, and walk through the process of hosting the app with Domino. 
+
+The app that we'll use takes historic power generation data over a user-defined time window, fits a time series forecast model to the usage data, the forecasts future production. 
     
 To do so - in a new browser tab first navigate back to your Project and then in the left blue menu of your project click into the **Files** section and click **New File**
+
 <p align="center">
 <img src = readme_images/AddNewFileforAppsh.png width="800">
 </p>     
 
-Next, we will create a file called app.sh. It's a bash script that will start and run the Shiny App server based on the inputs provided.
+Next, we will create a file called app.sh. It's a simple bash script that Domino uses to start and run the Dash App server based on the inputs provided. This script includes examples for calling a Flask, R/Shiny and Dash app. The Flask and Shiny lines are commented out, but are there for reference if you'd like to try hosting a Flask or Shiny app.
+
 Copy the following code snippet in - 
 
 ```shell
@@ -456,7 +462,7 @@ Copy the following code snippet in -
  
 ## R/Shiny Example
 ## This is an example of the code you would need in this bash script for a R/Shiny app
-R -e 'shiny::runApp("./scripts/shiny_app.R", port=8888, host="0.0.0.0")'
+## R -e 'shiny::runApp("./scripts/shiny_app.R", port=8888, host="0.0.0.0")'
  
 ## Flask example
 ## This is an example of the code you would need in this bash script for a Python/Flask app
@@ -468,7 +474,7 @@ R -e 'shiny::runApp("./scripts/shiny_app.R", port=8888, host="0.0.0.0")'
  
 ## Dash Example
 ## This is an example of the code you would need in this bash script for a Dash app
-#python app-dash.py
+python scripts/app.py
 ```
 Name the file **app.sh** and click **Save**
 <p align="center">
@@ -476,158 +482,263 @@ Name the file **app.sh** and click **Save**
 </p>         
 
 
-Now navigate back into the Files tab, and enter the **scripts** folder. Click add a new file and name it `shiny_app.R` (make sure the file name is exactly that, it is case sensitive) and then paste the following into the file -
+Now navigate back into the Files tab, and enter the **scripts** folder. Click add a new file and name it `app.py` (make sure the file name is exactly that, it is case sensitive) and then paste the following into the file, and Save.
 
-```R
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+<p align="center">
+<img src = readme_images/SavePythonApp.png width="800">
+</p> 
+
+```python
+# -*- coding: utf-8 -*-
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from datetime import datetime as dt
+from dash.dependencies import Input, Output
+import requests
+import datetime
+import os
  
-install.packages("png")
+import pandas as pd
+import datetime
+import matplotlib.pyplot as plt
+from fbprophet import Prophet
+import plotly.graph_objs as go
  
-library(shiny)
-library(png)
-library(httr)
-library(jsonlite)
-library(plotly)
-library(ggplot2)
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
  
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
  
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-  
-  # Application title
-  titlePanel("Wine Quality Prediction"),
-  
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-      numericInput(inputId="feat1",
-                   label='density', 
-                   value=0.99),
-      numericInput(inputId="feat2",
-                   label='volatile_acidity', 
-                   value=0.25),
-      numericInput(inputId="feat3",
-                   label='chlorides', 
-                   value=0.05),
-      numericInput(inputId="feat4",
-                   label='is_red', 
-                   value=1),
-      numericInput(inputId="feat5",
-                   label='alcohol', 
-                   value=10),
-      actionButton("predict", "Predict")
-    ),
-    
-    # Show a plot of the generated distribution
-    mainPanel(
-      tabsetPanel(id = "inTabset", type = "tabs",
-                  
-                  tabPanel(title="Prediction",value = "pnlPredict",
-                           plotlyOutput("plot"),
-                           verbatimTextOutput("summary"),
-                           verbatimTextOutput("version"),
-                           verbatimTextOutput("reponsetime"))
-      )        
+app.config.update({'requests_pathname_prefix': '/{}/{}/r/notebookSession/{}/'.format(
+    os.environ.get("DOMINO_PROJECT_OWNER"),
+    os.environ.get("DOMINO_PROJECT_NAME"),
+    os.environ.get("DOMINO_RUN_ID"))})
+ 
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
+ 
+# Plot configs
+prediction_color = '#0072B2'
+error_color = 'rgba(0, 114, 178, 0.2)'  # '#0072B2' with 0.2 opacity
+actual_color = 'black'
+cap_color = 'black'
+trend_color = '#B23B00'
+line_width = 2
+marker_size = 4
+uncertainty=True
+plot_cap=True
+trend=False
+changepoints=False
+changepoints_threshold=0.01
+xlabel='ds'
+ylabel='y'
+ 
+app.layout = html.Div(style={'paddingLeft': '40px', 'paddingRight': '40px'}, children=[
+    html.H1(children='Generate a Dataset for Power Generation in UK Forecasting'),
+    html.Div(children='''
+        This is a web app developed in Dash and published in Domino.
+        You can add more description about the app here if you'd like.
+    '''),
+     html.Div([
+        html.P('Select a Fuel Type:', className='fuel_type', id='fuel_type_paragraph'),
+        dcc.Dropdown(
+            options=[
+                {'label': 'Combined Cycle Gas Turbine', 'value': 'CCGT'},
+                {'label': 'Oil', 'value': 'OIL'},
+                {'label': 'Coal', 'value': 'COAL'},
+                {'label': 'Nuclear', 'value': 'NUCLEAR'},
+                {'label': 'Wind', 'value': 'WIND'},
+                {'label': 'Pumped Storage', 'value': 'PS'},
+                {'label': 'Hydro (Non Pumped Storage', 'value': 'NPSHYD'},
+                {'label': 'Open Cycle Gas Turbine', 'value': 'OCGT'},
+                {'label': 'Other', 'value': 'OTHER'},
+                {'label': 'France (IFA)', 'value': 'INTFR'},
+                {'label': 'Northern Ireland (Moyle)', 'value': 'INTIRL'},
+                {'label': 'Netherlands (BritNed)', 'value': 'INTNED'},
+                {'label': 'Ireland (East-West)', 'value': 'INTEW'},
+                {'label': 'Biomass', 'value': 'BIOMASS'},
+                {'label': 'Belgium (Nemolink)', 'value': 'INTEM'},
+            {'label': 'France (Eleclink)', 'value': 'INTEL'},
+            {'label': 'France (IFA2)', 'value': 'INTIFA2'},
+           {'label': 'Norway 2 (North Sea Link)', 'value': 'INTNSL'}
+            ],
+            value='CCGT',
+            id='fuel_type',
+            style = {'width':'auto', 'min-width': '300px'}
+        )
+    ], style={'marginTop': 25}),
+    html.Div([
+        html.Div('Training data will end today.'),
+        html.Div('Select the starting date for the training data:'),
+        dcc.DatePickerSingle(
+            id='date-picker',
+            date=dt(2021, 9, 10)
+        )
+    ], style={'marginTop': 25}),
+    html.Div([
+        dcc.Loading(
+            id="loading",
+            children=[dcc.Graph(id='prediction_graph',)],
+            type="circle",
+            ),
+        ], style={'marginTop': 25})
+])
+ 
+@app.callback(
+    # Output('loading', 'chhildren'),
+    Output('prediction_graph', 'figure'),
+    [Input('fuel_type', 'value'),
+     Input('date-picker', 'date')])
+def update_output(fuel_type, start_date):
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    start_date_reformatted = start_date.split('T')[0]
+    url = 'https://www.bmreports.com/bmrs/?q=ajax/filter_csv_download/FUELHH/csv/FromDate%3D{start_date}%26ToDate%3D{today}/&filename=GenerationbyFuelType_20191002_1657'.format(start_date = start_date_reformatted, today = today)
+    r = requests.get(url, allow_redirects=True)
+    open('data.csv', 'wb').write(r.content)
+    df = pd.read_csv('data.csv', skiprows=1, skipfooter=1, header=None, engine='python')
+    df.columns = ['HDF', 'date', 'half_hour_increment',
+                'CCGT', 'OIL', 'COAL', 'NUCLEAR',
+                'WIND', 'PS', 'NPSHYD', 'OCGT',
+                'OTHER', 'INTFR', 'INTIRL', 'INTNED', 'INTEW', 'BIOMASS', 'INTEM',
+                'INTEL','INTIFA2', 'INTNSL']
+    df['datetime'] = pd.to_datetime(df['date'], format="%Y%m%d")
+    df['datetime'] = df.apply(lambda x:
+                          x['datetime']+ datetime.timedelta(
+                              minutes=30*(int(x['half_hour_increment'])-1))
+                          , axis = 1)
+    df_for_prophet = df[['datetime', fuel_type]].rename(columns = {'datetime':'ds', fuel_type:'y'})
+    m = Prophet()
+    m.fit(df_for_prophet)
+    future = m.make_future_dataframe(periods=72, freq='H')
+    fcst = m.predict(future)
+    # from https://github.com/facebook/prophet/blob/master/python/fbprophet/plot.py
+    data = []
+    # Add actual
+    data.append(go.Scatter(
+        name='Actual',
+        x=m.history['ds'],
+        y=m.history['y'],
+        marker=dict(color=actual_color, size=marker_size),
+        mode='markers'
+    ))
+    # Add lower bound
+    if uncertainty and m.uncertainty_samples:
+        data.append(go.Scatter(
+            x=fcst['ds'],
+            y=fcst['yhat_lower'],
+            mode='lines',
+            line=dict(width=0),
+            hoverinfo='skip'
+        ))
+    # Add prediction
+    data.append(go.Scatter(
+        name='Predicted',
+        x=fcst['ds'],
+        y=fcst['yhat'],
+        mode='lines',
+        line=dict(color=prediction_color, width=line_width),
+        fillcolor=error_color,
+        fill='tonexty' if uncertainty and m.uncertainty_samples else 'none'
+    ))
+    # Add upper bound
+    if uncertainty and m.uncertainty_samples:
+        data.append(go.Scatter(
+            x=fcst['ds'],
+            y=fcst['yhat_upper'],
+            mode='lines',
+            line=dict(width=0),
+            fillcolor=error_color,
+            fill='tonexty',
+            hoverinfo='skip'
+        ))
+    # Add caps
+    if 'cap' in fcst and plot_cap:
+        data.append(go.Scatter(
+            name='Cap',
+            x=fcst['ds'],
+            y=fcst['cap'],
+            mode='lines',
+            line=dict(color=cap_color, dash='dash', width=line_width),
+        ))
+    if m.logistic_floor and 'floor' in fcst and plot_cap:
+        data.append(go.Scatter(
+            name='Floor',
+            x=fcst['ds'],
+            y=fcst['floor'],
+            mode='lines',
+            line=dict(color=cap_color, dash='dash', width=line_width),
+        ))
+    # Add trend
+    if trend:
+        data.append(go.Scatter(
+            name='Trend',
+            x=fcst['ds'],
+            y=fcst['trend'],
+            mode='lines',
+            line=dict(color=trend_color, width=line_width),
+        ))
+    # Add changepoints
+    if changepoints:
+        signif_changepoints = m.changepoints[
+            np.abs(np.nanmean(m.params['delta'], axis=0)) >= changepoints_threshold
+        ]
+        data.append(go.Scatter(
+            x=signif_changepoints,
+            y=fcst.loc[fcst['ds'].isin(signif_changepoints), 'trend'],
+            marker=dict(size=50, symbol='line-ns-open', color=trend_color,
+                        line=dict(width=line_width)),
+            mode='markers',
+            hoverinfo='skip'
+        ))
+ 
+    layout = dict(
+        showlegend=False,
+        yaxis=dict(
+            title=ylabel
+        ),
+        xaxis=dict(
+            title=xlabel,
+            type='date',
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=7,
+                         label='1w',
+                         step='day',
+                         stepmode='backward'),
+                    dict(count=1,
+                         label='1m',
+                         step='month',
+                         stepmode='backward'),
+                    dict(count=6,
+                         label='6m',
+                         step='month',
+                         stepmode='backward'),
+                    dict(count=1,
+                         label='1y',
+                         step='year',
+                         stepmode='backward'),
+                    dict(step='all')
+                ])
+            ),
+            rangeslider=dict(
+                visible=True
+            ),
+        ),
     )
-  )
-)
+    return {
+        'data': data,
+        'layout': layout
+    }
  
-prediction <- function(inpFeat1,inpFeat2,inpFeat3,inpFeat4,inpFeat5) {
-  
-#### COPY FULL LINES 4-7 from R tab in Model APIS page over this line of code. (It's a simple copy and paste) ####
-    
-    body=toJSON(list(data=list(density = inpFeat1, 
-                               volatile_acidity = inpFeat2,
-                               chlorides = inpFeat3,
-                               is_red = inpFeat4,
-                               alcohol = inpFeat5)), auto_unbox = TRUE),
-    content_type("application/json")
-  )
-  
-  str(content(response))
-  
-  result <- content(response)
-}
- 
-gauge <- function(pos,breaks=c(0,2.5,5,7.5, 10)) {
- 
-  get.poly <- function(a,b,r1=0.5,r2=1.0) {
-    th.start <- pi*(1-a/10)
-    th.end   <- pi*(1-b/10)
-    th       <- seq(th.start,th.end,length=10)
-    x        <- c(r1*cos(th),rev(r2*cos(th)))
-    y        <- c(r1*sin(th),rev(r2*sin(th)))
-    return(data.frame(x,y))
-  }
-  ggplot()+
-    geom_polygon(data=get.poly(breaks[1],breaks[2]),aes(x,y),fill="red")+
-    geom_polygon(data=get.poly(breaks[2],breaks[3]),aes(x,y),fill="gold")+
-    geom_polygon(data=get.poly(breaks[3],breaks[4]),aes(x,y),fill="orange")+
-    geom_polygon(data=get.poly(breaks[4],breaks[5]),aes(x,y),fill="forestgreen")+
-    geom_polygon(data=get.poly(pos-0.2,pos+0.2,0.2),aes(x,y))+
-    geom_text(data=as.data.frame(breaks), size=5, fontface="bold", vjust=0,
-              aes(x=1.1*cos(pi*(1-breaks/10)),y=1.1*sin(pi*(1-breaks/10)),label=paste0(breaks)))+
-    annotate("text",x=0,y=0,label=paste0(pos, " Points"),vjust=0,size=8,fontface="bold")+
-    coord_fixed()+
-    theme_bw()+
-    theme(axis.text=element_blank(),
-          axis.title=element_blank(),
-          axis.ticks=element_blank(),
-          panel.grid=element_blank(),
-          panel.border=element_blank())
-}
- 
-# Define server logic required to draw a histogram
-server <- function(input, output,session) {
-  
-  observeEvent(input$predict, {
-    updateTabsetPanel(session, "inTabset",
-                      selected = paste0("pnlPredict", input$controller)
-    )
-    print(input)
-    result <- prediction(input$feat1, input$feat2, input$feat3, input$feat4, input$feat5)
-    print(result)
-    
-    pred <- result$result[[1]][[1]]
-    modelVersion <- result$release$model_version_number
-    responseTime <- result$model_time_in_ms
-    output$summary <- renderText({paste0("Wine Quality estimate is ", round(pred,2))})
-    output$version <- renderText({paste0("Model version used for scoring : ", modelVersion)})
-    output$reponsetime <- renderText({paste0("Model response time : ", responseTime, " ms")})
-    output$plot <- renderPlotly({
-      gauge(round(pred,2))
-    })
-  })
-  
-}
- 
-# Run the application 
-shinyApp(ui = ui, server = server)
+if __name__ == '__main__':
+    app.run_server(port=8888, host='0.0.0.0', debug=True)
 ```
-
-**Go to line 63** note that this is missing input for your model api endpoint. In a new tab navigate to your model API you just deployed. Go into overview and select the R tab as shown below. Copy lines 4-7 from the R code snippet. Switch back to your new file tab and paste the new lines in line 64 in your file.
-
-<p align="center">
-<img src = readme_images/RcodeSnippet.png width="800">
-</p>                    
-Lines 61-79 in your file should look like the following (note the url and authenticate values will be different) 
-                   
-<p align="center">
-<img src = readme_images/ShinyCodePasted.png width="800">
-</p>         
-
-Click **Save**
-                   
+                
 Now that you have your app.sh and shiny_app.R files created. Navigate to the **App** tab in your project
 
-Enter a title for your app - 'wine-app-yourname'
+Enter a title for your app - 'Power-Forecast-App-yourname'. Note that Domino already knows about the app.sh file we added earlier.
 
 <p align="center">
 <img src = readme_images/LaunchApp.png width="800">
@@ -641,33 +752,33 @@ You'll now see the below screen, once your app is active (should be within ~1-3 
 <img src = readme_images/ViewApp.png width="800">
 </p>       
         
-Once you're in the app you can try out sending different scoring requests to your model using the form on the right side of your page. Click **predict** to send a scoring request and view the results in the visualization on the left side.
+Once you're in the app you can try out sending different forecasts from the time series model using the form on the left side of your page. Note that the application pulls data from BMRS, fits a model, then generates the forecast, so may take a minute to update when modified.
+
                    
 <p align="center">
-<img src = readme_images/ShinyScore.png width="800">
+<img src = readme_images/DashAppView.png width="800">
 </p>         
+
+From here, you can zoom into a single week to see the model's forecast.
+Try playing around with the training start date - sometimes time series models perform better with longer histories, sometimes shorter, depending on how quickly the generation profile in the UK is changing.
+
 
 ## Section 4 - Collaborate Results
 
 ### Lab 4.1 - Share Web App and Model API
 
-Congratulations! You have now gone through a full workflow to pull data from an S3 bucket, clean and visualize the data, train several models across different frameworks, deploy the best performing model, and use a web app front end for easy scoring of your model. Now the final step is to get your model and front end into the hands of the end users.
+Congratulations! You have now gone through a full workflow to pull data from an S3 bucket, clean and visualize the data, run jobs, schedule jobs, and deploy a web app front end for visualizing a forecast. Now the final step is to get your model and front end into the hands of the end users.
 
-To do so we will navigate back to our project and click on the **App** tab
+To do so we will navigate back to our project and click on the **App** tab.
+
+From the App page navigate to the **Permissions** tab.
+
+In the permissions tab update the permissions to allow anyone, including anonymous users.
 
 <p align="center">
 <img src = readme_images/GoToAppPermissions.png width="800">
 </p>         
-
-
-From the App page navigate to the **Permissions** tab
-
-In the permissions tab update the permissions to allow anyone, including anonymous users
-
-<p align="center">
-<img src = readme_images/UpdateAppPermissions.png width="800">
-</p>         
-
+       
 Navigate back to the **settings** tab and click **Copy Link App**
 
 <p align="center">
@@ -676,8 +787,6 @@ Navigate back to the **settings** tab and click **Copy Link App**
 
 Paste the copied link into a new private/incognito window. Note that you're able to view the app without being logged into Domino. Try sending this URL to a colleague at your company to show them the work you've done.
 
-PS - Domino provides free licenses for business users to login and view models/apps etc.
+Domino provides free licenses for business users to login and view models/apps etc - 
 
 ### *** End of Labs *** 
-
-So now that we've got our model into production are we done? No! We want to make sure that any models we deploy stay healthy over time, and if our models do drop in performance, we want to quickly identify and remediate any issues. Stay tuned for a demo of integrated model monitoring to see how a ML Engineer would automate the model monitoring process and make remediation a breeze.
