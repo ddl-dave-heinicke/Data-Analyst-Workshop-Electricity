@@ -286,6 +286,10 @@ sns.histplot(daily_peak_df.index.hour, stat='count', bins=10)
 plt.savefig('Peak Demand Hours.png', bbox_inches="tight")
 plt.show()
 ```
+
+Power production peaks at a different time each day. But what sources contribute to peak production each day? And does the breakdown change from month to month?
+
+
 ```python
 # Extract the month from the daily peak power dataframe
 daily_peak_df['Month'] = daily_peak_df.index
@@ -308,22 +312,13 @@ for i, row in monthly_totals.iterrows():
     plt.pie(row, labels=labels, colors=colors, autopct='%1.1f%%')
 ```
 
-Finally write your data to a Domino Dataset by running:
+After running EDA, you may want to save the daily peak demand dataframe for later reference. Here, we’ll save the dataset in the project in a Domino Dataset. However, we could also write the results back to s3, or any external storage if we wanted to. 
 
 ```python
 import os
 path = str('/domino/datasets/local/{}/Daily_Peak_Production_Summer_2022.csv'.format(os.environ.get('DOMINO_PROJECT_NAME')))
 daily_peak_df.to_csv(path, index = False)
 ```
-
-Your notebook should be populated like the display below.
-
-# Update
-<!-- ![image](readme_images/EDAView.png) -->
-
-<p align="center">
-<img src = readme_images/EDAView.png width="800">
-</p>
 
 Rename your notebook 'EDA_code.ipynb' by right clicking on the file name as shown below then click the Save icon.
 
@@ -333,9 +328,9 @@ Rename your notebook 'EDA_code.ipynb' by right clicking on the file name as show
 
 ### Lab 2.3 - Syncing Files
 
-Now that we've finished working on our notebook and written data back to our project, we want to sync our latest work. To do so click on the File Changes tab in the top left corner of your screen - 
+All of the changes we have made so far are saved in our workspace, and can be retrieved anytime we open this workspace. It’s as if we have saved changes to our local machine. However, to make our code updates visible to collaborators and available to other workspaces, we want to sync our work back to the project files.
 
-# Update
+
 <p align="center">
 <img src = readme_images/SyncProject.png width="800">
 </p>
@@ -346,7 +341,6 @@ Click the Domino logo on the upper left corner of the blue menu and select on th
 
 Notice that the latest commit will reflect the commit message you just logged and you can see 'EDA_code.ipynb' in your file directory.
 
- # Update
 <p align="center">
 <img src = readme_images/DFS.png width="800">
 </p>
@@ -372,9 +366,8 @@ Workspaces are great environments for doing exploratory work and writing code. H
 
 To simply run our code in our predefined environment and quickly visualize outputs, Domino has a feature called Jobs. Jobs spin up an instance, run a script, save outputs, and shut down the instance for us.
 
-# Jobs Image
 <p align="center">
-<img src = readme_images/MultiTrain.png width="800">
+<img src = readme_images/NavigateToJobs.png width="800">
 </p>
 
 
@@ -382,18 +375,10 @@ In this example, we want to pull some more recent September data from BMRS and s
 
 Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
 
-# Update
-
-**Run**.
-
-<p align="center">
-<img src = readme_images/Jobspage.png width="800">
-</p>
-
 ```shell
 scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-27 00:00:00'
 ```
-# Update
+
 <p align="center">
 <img src = readme_images/Jobsrun.png width="800">
 </p>
@@ -406,9 +391,11 @@ In the details tab of the job run note that the compute environment is tracked t
 
 Now, click into Domino Datasets and examine the contents in “Power Generation Workshop”. September data should be there. 
 
-# Add Datasets Image
+<p align="center">
+<img src = readme_images/UpdatedDataJob.png width="800">
+</p>
 
-In this example, we pushed the results to Dominio Datasets, but results could be pushed back to any attached data source such as S3, Snowflake etc.
+# Pick Up Here
 
 ### Lab 2.5 - Schedule Jobs
 

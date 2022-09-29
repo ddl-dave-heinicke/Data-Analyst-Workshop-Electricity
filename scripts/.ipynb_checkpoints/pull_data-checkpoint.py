@@ -83,7 +83,7 @@ def pull_data(start=None, end=None):
     now = str(datetime.datetime.today())
     
     # Save the consolidated data back to the project
-    consolidated_data.to_csv('/mnt/data/PowerGenerationWorkshop/PowerGenerationData_{}_to_{}.csv'.format(str(start_date), str(end_date)), index=False)
+    consolidated_data.to_csv('/domino/datasets/local/{}/PowerGenerationData_{}_to_{}.csv'.format(os.environ.get('DOMINO_PROJECT_NAME'), str(start_date), str(end_date)), index=False)
     
     print(consolidated_data.head())
 
@@ -119,10 +119,10 @@ def pull_data(start=None, end=None):
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=7))
     plt.xticks(rotation=45, ha='right', fontsize=12)
     ax.set_ylabel('Total Production, MW', fontsize=16)
-    ax.set_title('Cumulative Production, Summer 2022, MW', fontsize=16)
+    ax.set_title('Cumulative Production, MW', fontsize=16)
 
     # Save the figure as an image to the Domino File System
-    fig.savefig('/mnt/code/visualizations/Cumulative Production.png', bbox_inches="tight")
+    fig.savefig('/mnt/visualizations/Cumulative Production.png', bbox_inches="tight")
 
     plt.show()
     
