@@ -136,7 +136,7 @@ We have now created a project, added collaborators and attached a data source.
 
 ### Lab 2.1 - Exploring Workspaces
 
-Our goal in Section 2 is to take a look at power production data in the UK in the summer of 2022 (June-August). We'll vizualise the 
+Our goal in Section 2 is to take a look at power production data in the UK in the summer of 2022 (June-August). We'll visualize the 
 production data, then identify the hour in each day where production peaked, so that we can see the breakdown of energy sources
 when the grid is peaking.
 
@@ -150,7 +150,7 @@ In the top right corner click Create New Workspace.
 <img src = readme_images/AddWorkspace.png width="800">
 </p>
 
-Type a name for the Workspace in the 'Workspace Name' cell and next click through the available Compute Environments in the Workspace Environment drop down button. Next, ensure that Domino-Workspace-Environment is selected.
+Type a name for the Workspace in the 'Workspace Name' cell and next click through the available Compute Environments in the Workspace Environment drop down button. Next, ensure that Domino-PowerGeneration-Workshop-Environment is selected.
 
 Select JupyterLab as the Workspace IDE.
 
@@ -160,7 +160,6 @@ Click Launch.
 <img src = readme_images/LaunchWorkspace.png width="800">
 </p>
 
-# Update
 Once the workspace is launched, create a new python notebook by clicking here:
 
 <p align="center">
@@ -171,13 +170,12 @@ Once the workspace is launched, create a new python notebook by clicking here:
 
 Once your notebook is loaded, click on the left blue menu and click on the Data page, then onto the data source we added in lab 1 as displayed below
 
-# Update
 <p align="center">
 <img src = readme_images/DataTab.png width="800">
 </p>
 
 Copy the provided code snippet into your notebook and run the cell
-# Update
+
 <p align="center">
 <img src = readme_images/S3CodeSnippet.png width="800">
 </p>
