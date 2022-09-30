@@ -408,6 +408,10 @@ scripts/pull_data.py '--start=2022-09-15 00:00:00' '--end=2022-09-21 00:00:00'
 
 You'll notice that the tracker at the top has begun populating with stats from our runs - in this case total production over the time window in TWH and peak production in GW. When you run Domino jobs, you can save any stat you'd like from the run to include in the jobs tracker. 
 
+<p align="center">
+<img src = readme_images/JobsSummary.png width="800">
+</p>
+
 You do this by populating the dominostats json file in your script. In `pull_data.py` , saving the peak demand and peak production stats looks like this:
 
 ```python
