@@ -428,10 +428,6 @@ Under notify emails, tag yourself to be notified when the job runs - and Create!
 <img src = readme_images/SetJobNotification.png width="800">
 </p>
 
-### Lab 2.5 - Create a Launcher
-
-# TBD
-
 
 ## Section 3 - Create Applications
 
