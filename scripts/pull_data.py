@@ -127,17 +127,17 @@ def pull_data(start=None, end=None):
 
     plt.show()
     
-    # Show total power generated & peak generation over the dataset time window in 
+    # Show total power generated & peak generation over the dataset time window 
     total_energy_produced = round((sum(df_plot['TOTAL']) / 2 / 1000000), 1)
-    max_production = round(max(df_plot['TOTAL']), 2)
+    max_production = round(max(df_plot['TOTAL']) / 1000, 2)
     
     print("Total energy produced in the UK between {} and {}: {} TWH \n".format(start_date, end_date, total_energy_produced))
-    print("Peak production in UK between {} and {}: {} MW \n".format(start_date, end_date, max_production))
+    print("Peak production in UK between {} and {}: {} GW \n".format(start_date, end_date, max_production))
     
     #Code to write Total and Peak values to dominostats value for population in jobs
     with open('dominostats.json', 'w') as f:
         f.write(json.dumps({"Total TWH": total_energy_produced,
-                            "Max MWH": max_production}))
+                            "Max GW": max_production}))
     
 if __name__ == "__main__":
     
