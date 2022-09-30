@@ -8,6 +8,7 @@ import requests
 import csv
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import json
 
 def pull_data(start=None, end=None):
     
