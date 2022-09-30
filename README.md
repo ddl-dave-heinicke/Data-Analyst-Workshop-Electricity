@@ -384,7 +384,7 @@ In this example, we want to pull some more recent September data from BMRS and s
 Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
 
 ```shell
-scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-27 00:00:00'
+scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-30 00:00:00'
 ```
 
 <p align="center">
