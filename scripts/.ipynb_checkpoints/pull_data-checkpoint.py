@@ -92,7 +92,7 @@ def pull_data(start=None, end=None):
     df = consolidated_data.copy()
     
     # Create total output feature: sum of all fuel sources.
-    df['TOTAL'] = df.sum(axis=1, numeric_only=True)
+    df['TOTAL'] = df[['CCGT', 'OIL', 'COAL', 'NUCLEAR', 'WIND', 'PS', 'NPSHYD', 'OCGT', 'OTHER', 'INTFR', 'INTIRL', 'INTNED', 'INTEW', 'BIOMASS', 'INTEM']].sum(axis=1)
 
     # Select CCGT, Wind, Nuclear, Biomass and Coal & create "Other" column
     plot_cols = ['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL', 'TOTAL']
@@ -125,6 +125,18 @@ def pull_data(start=None, end=None):
     fig.savefig('/mnt/visualizations/Cumulative Production.png', bbox_inches="tight")
 
     plt.show()
+    
+    # Show total power generated & peak generation over the dataset time window in 
+    total_energy_produced = round(sum(df_plot['TOTAL'] / 2 / 1000000), 1)
+    max_production = round(max(df_plot['TOTAL']), 2)
+    
+    print("Total energy produced in the UK between {} and {}: {} TWH \n".format(start_date, end_date, total_energy_produced)
+    print("Peak production in UK between {} and {}: {} MW \n".format(start_date, end_date, max_production))
+    
+    #Code to write Total and Peak values to dominostats value for population in jobs
+    with open('dominostats.json', 'w') as f:
+        f.write(json.dumps({"Total TWH": total_energy_produced,
+                            "Max MWH": max_production}))
     
 if __name__ == "__main__":
     

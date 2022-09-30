@@ -213,7 +213,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 # Create total output feature: sum of all fuel sources.
-df['TOTAL'] = df.sum(axis=1, numeric_only=True)
+df['TOTAL'] = df[['CCGT', 'OIL', 'COAL', 'NUCLEAR', 'WIND', 'PS', 'NPSHYD', 'OCGT', 'OTHER', 'INTFR', 'INTIRL', 'INTNED', 'INTEW', 'BIOMASS', 'INTEM']].sum(axis=1)
 
 # Select CCGT, Wind, Nuclear, Biomass and Coal & create "Other" column
 plot_cols = ['CCGT', 'WIND', 'NUCLEAR','BIOMASS', 'COAL', 'TOTAL']
@@ -235,7 +235,6 @@ ax.stackplot(x,y,
              colors=colors,
              alpha=0.8)
 
-
 # Format the stack plot
 ax.legend(bbox_to_anchor=(1.25, 0.6), loc='right', fontsize=14)
 ax.xaxis.set_major_locator(mdates.DayLocator(interval=7))
@@ -244,7 +243,7 @@ ax.set_ylabel('Total Production, MW', fontsize=16)
 ax.set_title('Cumulative Production, Summer 2022, MW', fontsize=16)
 
 # Save the figure as an image to the Domino File System
-fig.savefig('Cumulative Production.png', bbox_inches="tight")
+plt.savefig('visualizations/Cumulative Production.png', bbox_inches="tight")
 
 plt.show()
 ```
@@ -267,12 +266,21 @@ daily_peak_df['TOTAL'] = daily_peak_df.sum(axis=1)
 idx = daily_peak_df.groupby(pd.Grouper(freq='D'))['TOTAL'].transform(max) == daily_peak_df['TOTAL']
 
 # Verify there are no duplicate Maximum values in a single day in the dataset
-print(daily_peak_df[idx].shape)
+print("The peak demand table includes {} days \n".format(daily_peak_df[idx].shape[0]))
 
 # Print a table with the daily Maximum values, and time when demand peaked
 daily_peak_df = daily_peak_df[idx]
 
-daily_peak_df.head()
+# Print total power generated over the dataset time window
+total_energy_produced = sum(df_plot['TOTAL'])
+max_production = max(df_plot['TOTAL'])
+
+print("Total energy produced in the UK between June and August 2022: {} TWH \n".format(round(total_energy_produced / 2 / 1000000, 1)))
+print("Peak production in UK between June and August 2022: {} MW \n".format(round(max_production)))
+
+# Print Peak demand over the dataset time window
+
+df_plot.head()
 ```
 We can also visualize the hours of the day when demand peaks, and save our plot.
 
