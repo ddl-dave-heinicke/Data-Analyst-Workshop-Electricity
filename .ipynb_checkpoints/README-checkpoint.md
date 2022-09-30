@@ -384,7 +384,7 @@ In this example, we want to pull some more recent September data from BMRS and s
 Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
 
 ```shell
-scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-30 00:00:00'
+scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-7 00:00:00'
 ```
 
 <p align="center">
@@ -397,7 +397,31 @@ In the details tab of the job run note that the compute environment and hardware
 
 In the details tab of the job run note that the compute environment is tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
 
-Now, click into Domino Datasets and examine the contents in “Power Generation Workshop”. September data should be there. 
+Now, pull a couple new weeks of data by starting new jobs and pasting the following commands:
+
+```shell
+scripts/pull_data.py '--start=2022-09-08 00:00:00' '--end=2022-09-14 00:00:00'
+```
+```shell
+scripts/pull_data.py '--start=2022-09-015 00:00:00' '--end=2022-09-21 00:00:00'
+```
+
+You'll notice that the tracker at the top has begun populating with stats from our runs - in this case total production over the time window in TWH and peak production in GW. When you run Domino jobs, you can save any stat you'd like from the run to include in the jobs tracker. 
+
+You do this by populating the dominostats json file in your script. In `pull_data.py` , saving the peak demand and peak production stats looks like this:
+
+```python
+    # Show total power generated & peak generation over the dataset time window 
+    total_energy_produced = round((sum(df_plot['TOTAL']) / 2 / 1000000), 1)
+    max_production = round(max(df_plot['TOTAL']) / 1000, 2)
+    
+    #Code to write Total and Peak values to dominostats value for population in jobs
+    with open('dominostats.json', 'w') as f:
+        f.write(json.dumps({"Total TWH": total_energy_produced,
+                            "Max GW": max_production}))
+```
+
+Finally, click into Domino Datasets and examine the contents in “Power Generation Workshop”. The September datasets should be there. 
 
 <p align="center">
 <img src = readme_images/UpdatedDataJob.png width="800">
