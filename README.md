@@ -403,7 +403,7 @@ Now, pull a couple new weeks of data by starting new jobs and pasting the follow
 scripts/pull_data.py '--start=2022-09-08 00:00:00' '--end=2022-09-14 00:00:00'
 ```
 ```shell
-scripts/pull_data.py '--start=2022-09-015 00:00:00' '--end=2022-09-21 00:00:00'
+scripts/pull_data.py '--start=2022-09-15 00:00:00' '--end=2022-09-21 00:00:00'
 ```
 
 You'll notice that the tracker at the top has begun populating with stats from our runs - in this case total production over the time window in TWH and peak production in GW. When you run Domino jobs, you can save any stat you'd like from the run to include in the jobs tracker. 
