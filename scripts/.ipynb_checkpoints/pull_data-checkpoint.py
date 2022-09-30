@@ -128,7 +128,7 @@ def pull_data(start=None, end=None):
     plt.show()
     
     # Show total power generated & peak generation over the dataset time window in 
-    total_energy_produced = round(sum(df_plot['TOTAL'] / 2 / 1000000), 1)
+    total_energy_produced = round((sum(df_plot['TOTAL']) / 2 / 1000000), 1)
     max_production = round(max(df_plot['TOTAL']), 2)
     
     print("Total energy produced in the UK between {} and {}: {} TWH \n".format(start_date, end_date, total_energy_produced))
