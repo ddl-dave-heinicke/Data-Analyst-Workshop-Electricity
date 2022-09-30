@@ -130,7 +130,7 @@ def pull_data(start=None, end=None):
     total_energy_produced = round(sum(df_plot['TOTAL'] / 2 / 1000000), 1)
     max_production = round(max(df_plot['TOTAL']), 2)
     
-    print("Total energy produced in the UK between {} and {}: {} TWH \n".format(start_date, end_date, total_energy_produced)
+    print("Total energy produced in the UK between {} and {}: {} TWH \n".format(start_date, end_date, total_energy_produced))
     print("Peak production in UK between {} and {}: {} MW \n".format(start_date, end_date, max_production))
     
     #Code to write Total and Peak values to dominostats value for population in jobs
