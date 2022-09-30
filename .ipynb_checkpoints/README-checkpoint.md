@@ -291,7 +291,7 @@ plt.figure(figsize=(8,5))
 plt.title('Hours in the day When Demand Peaks in the UK, Summer 2022')
 plt.xlabel('Hour of the Day')
 sns.histplot(daily_peak_df.index.hour, stat='count', bins=10)
-plt.savefig('Peak Demand Hours.png', bbox_inches="tight")
+plt.savefig('visualizations/Peak Demand Hours.png', bbox_inches="tight")
 plt.show()
 ```
 
