@@ -389,7 +389,7 @@ scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-07 00:00:00'
 <img src = readme_images/Jobsrun.png width="800">
 </p>
 
-Click into the pull_data.py job run.
+Click into the `scripts/pull_data.py` job run.
 
 In the **Details** tab of the job run note that the compute environment and hardware tier are tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed. Note that the compute environment is tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
 
@@ -410,7 +410,7 @@ You'll notice that the tracker at the top has begun populating with stats from o
 <img src = readme_images/JobsSummary.png width="800">
 </p>
 
-You do this by populating the dominostats json file in your script. In `pull_data.py` , saving the peak demand and peak production stats looks like this:
+You do this by populating the dominostats json file in your script. In `pull_data.py` , saving the peak demand and peak production stats looks like this (if you'd like to examine for yourself, it is at abuot line 130 in `scripts/pull_data.py`:
 
 ```python
     # Show total power generated & peak generation over the dataset time window 
@@ -433,15 +433,15 @@ Finally, click into Domino Datasets and examine the contents in “Power Generat
 
 Say we wanted to pull the data each month. Rather than running this job manually, we can schedule the job to run in Domino.
 
-The script we ran manually, pull_data.py, defaults to pulling the past 30 days if we don't pass it an start and end date, so we can simply schedule it to run each month.
+The script we ran manually, `pull_data.py`, defaults to pulling the past 30 days if we don't pass it a start and end date, so we can simply schedule it to run each month.
 
-Navigate to “Scheduled Jobs” under “Publish”, and select, “New Scheduled Job”
+Navigate to **Scheduled Jobs** under “Publish”, and select, **New Scheduled Job**
 
 <p align="center">
 <img src = readme_images/NewScheduleJob.png width="800">
 </p>
 
-Paste the following unde "File Name or Command", give the job the name "Monthly Data Pull", and verify that the Environment is "Domino-PowerGeneration-Workshop-Environment". It should be, since we set it as our project environemnt, but it's always good to check. Click “Next”. 
+Paste the following under "File Name or Command", give the job the name "Monthly Data Pull", and verify that the Environment is "Domino-PowerGeneration-Workshop-Environment". It should be, since we set it as our project environemnt, but it's always good to check. Click “Next”. 
 
 ```shell
 scripts/pull_data.py
@@ -468,11 +468,11 @@ Under notify emails, tag yourself to be notified when the job runs - and Create!
 
 ### Lab 3.1 Deploying Web App
     
-Static reports and dashboards are a useful way to consume data and insights, but taking the next step to an interactive application can go further and deriving value from your data. Domino's open platform allows you to build and host apps in many different frameworks, such as Dash, Shiny, Steamlit and others. Once Domino has spun up the app for you, you can share it with your colleagues, even if they do not have Domino licenses.
+Static reports and dashboards are a useful way to consume data and insights, but taking the next step to an interactive application can go further and deriving value from your data. Domino's open platform allows you to build and host apps in many different frameworks, such as Dash, Shiny, Streamlit and others. Once Domino has spun up the app for you, you can share it with your colleagues, even if they do not have Domino licenses.
 
 In this lab, we won't go through the details of building an app with one of the avaialbe frameworks. We'll take an existing app script built in Dash, and walk through the process of hosting the app with Domino. 
 
-The app that we'll use takes historic power generation data over a user-defined time window, fits a time series forecast model to the usage data, the forecasts future production. 
+The app that we'll use takes historic power generation data over a user-defined time window, fits a time series forecast model to the usage data, then forecasts future production. 
     
 To do so - in a new browser tab first navigate back to your Project and then in the left blue menu of your project click into the **Files** section and click **New File**
 
@@ -480,7 +480,7 @@ To do so - in a new browser tab first navigate back to your Project and then in 
 <img src = readme_images/AddNewFileforAppsh.png width="800">
 </p>     
 
-Next, we will create a file called app.sh. It's a simple bash script that Domino uses to start and run the Dash App server based on the inputs provided. This script includes examples for calling a Flask, R/Shiny and Dash app. The Flask and Shiny lines are commented out, but are there for reference if you'd like to try hosting a Flask or Shiny app.
+Here, we will create a file called app.sh. It's a simple bash script that Domino uses to start and run the Dash App server based on the inputs provided. This script includes examples for calling a Flask, R/Shiny and Dash apps. The Flask and Shiny lines are commented out, but are there for reference if you'd like to try hosting a Flask or Shiny app.
 
 Copy the following code snippet in - 
 
@@ -776,7 +776,7 @@ Enter a title for your app - 'Power-Forecast-App-yourname'. Note that Domino alr
 <img src = readme_images/LaunchApp.png width="800">
 </p>       
 
-Click Publish.
+Click **Publish**.
                    
 You'll now see the below screen, once your app is active (should be within ~1-3 minutes) you can click the View App button. 
 
@@ -784,7 +784,7 @@ You'll now see the below screen, once your app is active (should be within ~1-3 
 <img src = readme_images/ViewApp.png width="800">
 </p>       
         
-Once you're in the app you can try out sending different forecasts from the time series model using the form on the left side of your page. Note that the application pulls data from BMRS, fits a model, then generates the forecast, so may take a minute to update when modified.
+Once you're in the app you can try out sending different forecasts from the time series model using the form on the left side of your page. Note that the application pulls data from BMRS, fits a model, then generates the forecast, so may take a few minutes to update when modified.
 
                    
 <p align="center">
@@ -818,7 +818,5 @@ Navigate back to the **settings** tab and click **Copy Link App**
 </p>       
 
 Paste the copied link into a new private/incognito window. Note that you're able to view the app without being logged into Domino. Try sending this URL to a colleague at your company to show them the work you've done.
-
-Domino provides free licenses for business users to login and view models/apps etc - 
 
 ### *** End of Labs *** 
