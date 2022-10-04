@@ -391,11 +391,11 @@ scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-07 00:00:00'
 
 Click into the pull_data.py job run.
 
-In the details tab of the job run note that the compute environment and hardware tier are tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
+In the **Details** tab of the job run note that the compute environment and hardware tier are tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed. Note that the compute environment is tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
 
-In the details tab of the job run note that the compute environment is tracked to document not only who ran the experiment and when, but what versions of the code, software, and hardware were executed.
+Click into the **Results** tab. Here you can see any data, saved figures, and outputs from the script that was run.
 
-Now, pull a couple new weeks of data by starting new jobs and pasting the following commands:
+Now, pull a couple new weeks of data by running new jobs and pasting the following commands:
 
 ```shell
 scripts/pull_data.py '--start=2022-09-08 00:00:00' '--end=2022-09-14 00:00:00'
