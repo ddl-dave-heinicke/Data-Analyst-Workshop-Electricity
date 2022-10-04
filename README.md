@@ -21,8 +21,6 @@ Select the project called PowerGenerationWorkshop
 <img src = readme_images/Search.png width="800">
 </p>
 
-Read the readme to learn more about the project's use case, status, etc.
-
 In the top right corner, choose the icon to **fork** the project. Name the project *Domino-Training-yourname*
 
 <!-- ![image](readme_images/Fork.png) -->
@@ -112,7 +110,7 @@ We will now add a data connection defined by the admin of our project to later q
 <img src = readme_images/AddDataSource.png width="800">
 </p>
 
-Select the 'Domino-PowerGeneration-Workshop' s3 bucket connection and click add to project (The avaialble data sources on the left may look different).
+Select the 'Domino-PowerGeneration-Workshop' s3 bucket connection and click add to project.
 
 <!-- ![image](readme_images/AddS3.png) -->
 
@@ -154,7 +152,7 @@ Type a name for the Workspace in the 'Workspace Name' cell and next click throug
 
 Select JupyterLab as the Workspace IDE.
 
-Click Launch.
+Click **Launch**.
 
 <p align="center">
 <img src = readme_images/LaunchWorkspace.png width="800">
@@ -381,10 +379,10 @@ To simply run our code in our predefined environment and quickly visualize outpu
 
 In this example, we want to pull some more recent September data from BMRS and save it to the Domino File System.
 
-Type in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
+Copy in the following command below in the **File Name** section of the **Start a Job** pop up window. Click on **Start** to run the job.
 
 ```shell
-scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-7 00:00:00'
+scripts/pull_data.py '--start=2022-09-01 00:00:00' '--end=2022-09-07 00:00:00'
 ```
 
 <p align="center">
