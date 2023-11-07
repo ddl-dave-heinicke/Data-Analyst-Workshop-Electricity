@@ -819,4 +819,4 @@ Navigate back to the **settings** tab and click **Copy Link App**
 
 Paste the copied link into a new private/incognito window. Note that you're able to view the app without being logged into Domino. Try sending this URL to a colleague at your company to show them the work you've done.
 
-### *** End of Labs *** 
+### *** End of Lab *** 
